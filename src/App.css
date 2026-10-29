@@ -12,6 +12,110 @@
   background-size: cover;
 }
 
+.preloader {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: translateY(0);
+  background-color: #061326;
+  background-image:
+    radial-gradient(ellipse at 18% 82%, rgba(59, 130, 246, 0.2), transparent 44%),
+    radial-gradient(ellipse at 82% 18%, rgba(81, 168, 177, 0.16), transparent 42%),
+    linear-gradient(125deg, #061326 10%, #10284a 50%, #061326 90%);
+  background-size: 180% 180%;
+  animation: preloader-background 6s ease-in-out infinite alternate;
+  transition: transform 850ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.preloader.is-exiting {
+  transform: translateY(100%);
+}
+
+.preloader-content {
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  animation: preloader-arrive 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.preloader-logo {
+  display: block;
+  width: min(420px, 76vw);
+  aspect-ratio: 3674 / 660;
+  object-fit: contain;
+  animation: preloader-arrive 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.preloader-progress {
+  width: 96px;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.preloader-progress::after {
+  display: block;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #6ed2c7);
+  content: '';
+  animation: preloader-progress 1.15s ease-in-out infinite;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@keyframes preloader-background {
+  from {
+    background-position: 0% 50%;
+  }
+
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes preloader-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes preloader-progress {
+  from {
+    transform: translateX(-120%);
+  }
+
+  to {
+    transform: translateX(340%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader,
+  .preloader-content,
+  .preloader-logo,
+  .preloader-progress::after {
+    animation: none;
+    transition: none;
+  }
+}
+
 .site-header {
   position: absolute;
   z-index: 1;

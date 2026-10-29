@@ -1,11 +1,77 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [loaderState, setLoaderState] = useState('loading')
+
+  useEffect(() => {
+    let isMounted = true
+    let exitTimer
+
+    const loadImage = (src) =>
+      new Promise((resolve, reject) => {
+        const image = new Image()
+        image.onload = resolve
+        image.onerror = () =>
+          reject(new Error(`Não foi possível carregar ${src}`))
+        image.src = src
+      })
+
+    const minimumDisplayTime = new Promise((resolve) =>
+      window.setTimeout(resolve, 1000),
+    )
+
+    Promise.all([
+      Promise.allSettled([
+        loadImage('/bgNoite.png'),
+        loadImage('/logoSemFundo.png'),
+      ]),
+      minimumDisplayTime,
+    ]).then(([imageResults]) => {
+      imageResults.forEach((result) => {
+        if (result.status === 'rejected') {
+          console.error(result.reason)
+        }
+      })
+
+      if (isMounted) {
+        setLoaderState('exiting')
+        const exitDuration = window.matchMedia(
+          '(prefers-reduced-motion: reduce)',
+        ).matches
+          ? 0
+          : 850
+        exitTimer = window.setTimeout(
+          () => setLoaderState('hidden'),
+          exitDuration,
+        )
+      }
+    })
+
+    return () => {
+      isMounted = false
+      window.clearTimeout(exitTimer)
+    }
+  }, [])
 
   return (
     <main className="hero">
+      {loaderState !== 'hidden' && (
+        <div
+          className={`preloader${loaderState === 'exiting' ? ' is-exiting' : ''}`}
+          role="status"
+          aria-label="Carregando site"
+          aria-hidden={loaderState === 'exiting'}
+        >
+          <div className="preloader-content">
+            <img className="preloader-logo" src="/logoSemFundo.png" alt="" />
+            <span className="preloader-progress" aria-hidden="true" />
+          </div>
+          <span className="visually-hidden">Carregando...</span>
+        </div>
+      )}
+
       <header className="site-header">
         <button
           className={`menu-toggle${menuOpen ? ' is-open' : ''}`}
