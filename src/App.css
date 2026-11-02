@@ -231,18 +231,26 @@
 }
 
 .site-header {
-  position: absolute;
-  z-index: 1;
+  position: fixed;
+  z-index: 6;
   inset: 0 0 auto;
+  isolation: isolate;
   display: flex;
   height: 60px;
   align-items: stretch;
   justify-content: space-between;
   padding: 0 9%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.site-header::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
   background: rgba(6, 19, 38, 0.25);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  content: '';
 }
 
 .primary-nav,
@@ -256,8 +264,8 @@
 }
 
 .primary-nav {
-  position: absolute;
-  z-index: 2;
+  position: fixed;
+  z-index: 7;
   top: 0;
   left: 9%;
   height: 60px;
@@ -293,6 +301,10 @@
 }
 
 .social-links {
+  position: absolute;
+  top: 0;
+  right: 9%;
+  height: 60px;
   gap: 26px;
 }
 
@@ -317,18 +329,13 @@
   filter: brightness(0) invert(1);
 }
 
-.hero-content {
-  position: absolute;
+.brand-overlay {
+  position: fixed;
+  z-index: 8;
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 24px;
-}
-
-.brand-lockup {
-  display: grid;
-  justify-items: center;
-  width: 100%;
+  pointer-events: none;
 }
 
 .brand-logo {
@@ -351,6 +358,7 @@
   }
 
   .social-links {
+    right: 6%;
     gap: 18px;
   }
 
@@ -360,6 +368,10 @@
 }
 
 @media (max-width: 600px) {
+  .brand-overlay.is-menu-open {
+    z-index: 4;
+  }
+
   .site-header {
     z-index: 6;
     padding-inline: 5%;
@@ -418,6 +430,8 @@
   }
 
   .social-links {
+    position: static;
+    height: 100%;
     margin-left: auto;
     pointer-events: auto;
   }

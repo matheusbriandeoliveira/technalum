@@ -81,12 +81,30 @@ function App() {
   const [loaderState, setLoaderState] = useState('loading')
   const heroVideoRef = useRef(null)
   const scrollOverlapRef = useRef(null)
+  const aboutSectionRef = useRef(null)
   const shouldReduceMotion = useReducedMotion()
   const animationTransition = shouldReduceMotion ? { duration: 0 } : spring
   const { scrollYProgress } = useScroll({
     target: scrollOverlapRef,
     offset: ['start start', 'end start'],
   })
+  const { scrollYProgress: aboutScrollProgress } = useScroll({
+    target: aboutSectionRef,
+    offset: ['start end', 'start start'],
+  })
+  const aboutLogoProgress = useTransform(
+    aboutScrollProgress,
+    [0, 0.8],
+    [0, 1],
+  )
+  const heroLogoY = useTransform(aboutLogoProgress, (progress) =>
+    shouldReduceMotion ? 0 : progress * (30 - window.innerHeight / 2),
+  )
+  const heroLogoScale = useTransform(
+    aboutLogoProgress,
+    [0, 1],
+    [1, shouldReduceMotion ? 1 : 0.32],
+  )
   const heroParallaxY = useTransform(
     scrollYProgress,
     [0, 1],
@@ -97,12 +115,6 @@ function App() {
     [0, 1],
     shouldReduceMotion ? [1, 1] : [1, 1.08],
   )
-  const heroContentOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.18],
-    shouldReduceMotion ? [1, 1] : [1, 0.82],
-  )
-
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 600px)')
     const updateMenuMode = () => {
@@ -292,6 +304,7 @@ function App() {
       <div className="scroll-overlap" ref={scrollOverlapRef}>
       <main
         className={`hero${menuOpen && isMobileMenu ? ' is-menu-open' : ''}`}
+        id="home"
         inert={loaderState !== 'hidden'}
         aria-hidden={loaderState !== 'hidden'}
       >
@@ -309,116 +322,108 @@ function App() {
             preload="auto"
           />
         </div>
+      </main>
 
-        <header className="site-header">
-          <motion.button
-            className={`menu-toggle${menuOpen ? ' is-open' : ''}`}
-            type="button"
-            aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
-            aria-expanded={menuOpen}
-            aria-controls="primary-navigation"
-            onClick={() => setMenuOpen((isOpen) => !isOpen)}
-            whileTap={{ scale: 0.9 }}
-            transition={animationTransition}
-          >
-            <motion.span
-              animate={{ y: menuOpen ? 6.5 : 0, rotate: menuOpen ? 45 : 0 }}
-              transition={animationTransition}
-            />
-            <motion.span
-              animate={{ opacity: menuOpen ? 0 : 1, scaleX: menuOpen ? 0 : 1 }}
-              transition={animationTransition}
-            />
-            <motion.span
-              animate={{ y: menuOpen ? -6.5 : 0, rotate: menuOpen ? -45 : 0 }}
-              transition={animationTransition}
-            />
-          </motion.button>
-
-          <div className="social-links" aria-label="Redes sociais">
-            <motion.a
-              className="social-link"
-              href="https://www.whatsapp.com/"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="WhatsApp"
-              whileHover={{ scale: 1.12, y: -2 }}
-              whileFocus={{ scale: 1.12, y: -2 }}
-              transition={animationTransition}
-            >
-              <img className="social-icon" src="/whatsapp.png" alt="" />
-            </motion.a>
-            <motion.a
-              className="social-link"
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              whileHover={{ scale: 1.12, y: -2 }}
-              whileFocus={{ scale: 1.12, y: -2 }}
-              transition={animationTransition}
-            >
-              <img className="social-icon" src="/instagram.png" alt="" />
-            </motion.a>
-          </div>
-        </header>
-
-        <motion.nav
-          className={`primary-nav${menuOpen ? ' is-open' : ''}`}
-          id="primary-navigation"
-          aria-label="Navegação principal"
-          aria-hidden={isMobileMenu ? !menuOpen : undefined}
-          inert={isMobileMenu && !menuOpen}
-          animate={
-            isMobileMenu
-              ? {
-                  opacity: menuOpen ? 1 : 0,
-                  y: menuOpen ? 0 : -20,
-                  scale: menuOpen ? 1 : 0.98,
-                  pointerEvents: menuOpen ? 'auto' : 'none',
-                }
-              : { opacity: 1, y: 0, scale: 1, pointerEvents: 'auto' }
-          }
+      <header
+        className="site-header"
+        inert={loaderState !== 'hidden'}
+        aria-hidden={loaderState !== 'hidden'}
+      >
+        <motion.button
+          className={`menu-toggle${menuOpen ? ' is-open' : ''}`}
+          type="button"
+          aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation"
+          onClick={() => setMenuOpen((isOpen) => !isOpen)}
+          whileTap={{ scale: 0.9 }}
           transition={animationTransition}
         >
-          <a
-            className="nav-link is-active"
-            href="#home"
-            aria-current="page"
-            onClick={() => setMenuOpen(false)}
-          >
-            Home
-          </a>
-          <a
-            className="nav-link"
-            href="#sobre"
-            onClick={() => setMenuOpen(false)}
-          >
-            Sobre
-          </a>
-          <a
-            className="nav-link"
-            href="#contato"
-            onClick={() => setMenuOpen(false)}
-          >
-            Contato
-          </a>
-        </motion.nav>
+          <motion.span
+            animate={{ y: menuOpen ? 6.5 : 0, rotate: menuOpen ? 45 : 0 }}
+            transition={animationTransition}
+          />
+          <motion.span
+            animate={{ opacity: menuOpen ? 0 : 1, scaleX: menuOpen ? 0 : 1 }}
+            transition={animationTransition}
+          />
+          <motion.span
+            animate={{ y: menuOpen ? -6.5 : 0, rotate: menuOpen ? -45 : 0 }}
+            transition={animationTransition}
+          />
+        </motion.button>
 
-        <motion.div
-          className="hero-content"
-          id="home"
-          style={{ opacity: heroContentOpacity }}
+        <div className="social-links" aria-label="Redes sociais">
+          <motion.a
+            className="social-link"
+            href="https://www.whatsapp.com/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="WhatsApp"
+            whileHover={{ scale: 1.12, y: -2 }}
+            whileFocus={{ scale: 1.12, y: -2 }}
+            transition={animationTransition}
+          >
+            <img className="social-icon" src="/whatsapp.png" alt="" />
+          </motion.a>
+          <motion.a
+            className="social-link"
+            href="https://www.instagram.com/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Instagram"
+            whileHover={{ scale: 1.12, y: -2 }}
+            whileFocus={{ scale: 1.12, y: -2 }}
+            transition={animationTransition}
+          >
+            <img className="social-icon" src="/instagram.png" alt="" />
+          </motion.a>
+        </div>
+      </header>
+
+      <motion.nav
+        className={`primary-nav${menuOpen ? ' is-open' : ''}`}
+        id="primary-navigation"
+        aria-label="Navegação principal"
+        aria-hidden={
+          loaderState !== 'hidden' || (isMobileMenu && !menuOpen)
+        }
+        inert={loaderState !== 'hidden' || (isMobileMenu && !menuOpen)}
+        animate={
+          isMobileMenu
+            ? {
+                opacity: menuOpen ? 1 : 0,
+                y: menuOpen ? 0 : -20,
+                scale: menuOpen ? 1 : 0.98,
+                pointerEvents: menuOpen ? 'auto' : 'none',
+              }
+            : { opacity: 1, y: 0, scale: 1, pointerEvents: 'auto' }
+        }
+        transition={animationTransition}
+      >
+        <a
+          className="nav-link is-active"
+          href="#home"
+          aria-current="page"
+          onClick={() => setMenuOpen(false)}
         >
-          <div className="brand-lockup">
-            <img
-              className="brand-logo"
-              src="/logoSemFundo.png"
-              alt="TECHNALUM — Esquadrias e Fachadas"
-            />
-          </div>
-        </motion.div>
-      </main>
+          Home
+        </a>
+        <a
+          className="nav-link"
+          href="#sobre"
+          onClick={() => setMenuOpen(false)}
+        >
+          Sobre
+        </a>
+        <a
+          className="nav-link"
+          href="#contato"
+          onClick={() => setMenuOpen(false)}
+        >
+          Contato
+        </a>
+      </motion.nav>
 
       <section
         className="solutions-marquee"
@@ -448,6 +453,7 @@ function App() {
       <section
         className="about-section"
         id="sobre"
+        ref={aboutSectionRef}
         aria-labelledby="about-title"
         inert={loaderState !== 'hidden'}
         aria-hidden={loaderState !== 'hidden'}
@@ -513,6 +519,19 @@ function App() {
         </div>
       </section>
       </div>
+
+      <motion.div
+        className={`brand-overlay${menuOpen && isMobileMenu ? ' is-menu-open' : ''}`}
+        style={{ y: heroLogoY, scale: heroLogoScale }}
+        inert={loaderState !== 'hidden'}
+        aria-hidden={loaderState !== 'hidden'}
+      >
+        <img
+          className="brand-logo"
+          src="/logoSemFundo.png"
+          alt="TECHNALUM — Esquadrias e Fachadas"
+        />
+      </motion.div>
     </>
   )
 }
