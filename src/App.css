@@ -749,13 +749,17 @@
 
   .solutions-carousel {
     gap: 14px;
-    width: calc(100% + 24px);
+    box-sizing: border-box;
+    width: 100vw;
+    margin-left: -24px;
     margin-right: -24px;
     padding-right: 24px;
+    padding-left: 24px;
+    scroll-padding-inline: 24px;
   }
 
   .solution-card {
-    flex-basis: calc((100% + 10px) / 1.2);
+    flex-basis: calc((100vw - 55px) / 1.5);
     aspect-ratio: 0.72;
   }
 

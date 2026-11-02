@@ -172,8 +172,13 @@ function SolutionsSection({ shouldReduceMotion, isReady }) {
     }
 
     updateScrollButtons()
+    const resizeObserver = new ResizeObserver(updateScrollButtons)
+    resizeObserver.observe(carousel)
     window.addEventListener('resize', updateScrollButtons)
-    return () => window.removeEventListener('resize', updateScrollButtons)
+    return () => {
+      resizeObserver.disconnect()
+      window.removeEventListener('resize', updateScrollButtons)
+    }
   }, [])
 
   const scrollCarousel = (direction) => {
@@ -296,7 +301,7 @@ function SolutionsSection({ shouldReduceMotion, isReady }) {
                 whileInView={
                   shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
                 }
-                viewport={{ once: true, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.05 }}
                 transition={
                   shouldReduceMotion
                     ? { duration: 0 }
