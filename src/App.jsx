@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
+  AnimatePresence,
   motion,
   useInView,
   useMotionValue,
@@ -8,9 +9,54 @@ import {
   useSpring,
   useTransform,
 } from 'motion/react'
+import { createPortal } from 'react-dom'
 import './App.css'
 
 const spring = { type: 'spring', stiffness: 180, damping: 20, mass: 0.8 }
+const solutionCards = [
+  {
+    category: 'ESQUADRIAS',
+    title: 'Esquadrias de Alumínio',
+    image: '/carrossel/esquadriasdealuminio.png',
+    description:
+      'Soluções sob medida que integram conforto, desempenho e desenho arquitetônico.',
+  },
+  {
+    category: 'VÃOS ENVIDRAÇADOS',
+    title: 'Caixilhos',
+    image: '/carrossel/caixilios.png',
+    description:
+      'Caixilhos sob medida que valorizam a entrada de luz, o conforto e a integração dos ambientes.',
+  },
+  {
+    category: 'SISTEMAS ENVIDRAÇADOS',
+    title: 'Structural Glazing',
+    image: '/carrossel/glazing.png',
+    description:
+      'Sistemas envidraçados com precisão técnica, transparência e integração à arquitetura.',
+  },
+  {
+    category: 'SEGURANÇA',
+    title: 'Guarda-corpos',
+    image: '/carrossel/guardaCorpos.png',
+    description:
+      'Segurança e leveza visual para valorizar projetos residenciais e corporativos.',
+  },
+  {
+    category: 'ÁREAS DE CONVIVÊNCIA',
+    title: 'Pergolados com Vidro',
+    image: '/carrossel/pergoladocomvidro.png',
+    description:
+      'Estruturas que ampliam áreas de convivência, preservando a entrada de luz natural.',
+  },
+  {
+    category: 'PORTAS',
+    title: 'Portas Pivotantes',
+    image: '/carrossel/portaspivotantes.png',
+    description:
+      'Portas de entrada com presença marcante, proporções elegantes e acabamento sob medida.',
+  },
+]
 const solutions = [
   'ESQUADRIAS DE ALUMÍNIO',
   'PORTAS E JANELAS',
@@ -41,6 +87,320 @@ const companyHighlights = [
     description: 'Da fabricação à instalação',
   },
 ]
+
+function useOutsideClick(ref, callback) {
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (!ref.current || ref.current.contains(event.target)) {
+        return
+      }
+
+      callback(event)
+    }
+
+    document.addEventListener('mousedown', handleOutsideClick)
+    document.addEventListener('touchstart', handleOutsideClick)
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick)
+      document.removeEventListener('touchstart', handleOutsideClick)
+    }
+  }, [callback, ref])
+}
+
+function SolutionsSection({ shouldReduceMotion, isReady }) {
+  const carouselRef = useRef(null)
+  const dragStateRef = useRef(null)
+  const dialogRef = useRef(null)
+  const closeButtonRef = useRef(null)
+  const [activeCard, setActiveCard] = useState(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+  const closeActiveCard = useCallback(() => setActiveCard(null), [])
+
+  useOutsideClick(dialogRef, closeActiveCard)
+
+  useEffect(() => {
+    if (!activeCard) {
+      return undefined
+    }
+
+    const previousBodyOverflow = document.body.style.overflow
+    const previouslyFocusedElement = document.activeElement
+    const appRoot = document.getElementById('root')
+    const wasAppRootInert = appRoot?.inert ?? false
+    document.body.style.overflow = 'hidden'
+    if (appRoot) {
+      appRoot.inert = true
+    }
+    closeButtonRef.current?.focus()
+
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') {
+        closeActiveCard()
+        return
+      }
+
+      if (event.key === 'Tab') {
+        event.preventDefault()
+        closeButtonRef.current?.focus()
+      }
+    }
+
+    window.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.body.style.overflow = previousBodyOverflow
+      if (appRoot) {
+        appRoot.inert = wasAppRootInert
+      }
+      window.removeEventListener('keydown', closeOnEscape)
+      previouslyFocusedElement?.focus?.()
+    }
+  }, [activeCard, closeActiveCard])
+
+  useEffect(() => {
+    const carousel = carouselRef.current
+    if (!carousel) {
+      return undefined
+    }
+
+    const updateScrollButtons = () => {
+      setCanScrollLeft(carousel.scrollLeft > 0)
+      setCanScrollRight(
+        carousel.scrollLeft + carousel.clientWidth < carousel.scrollWidth - 1,
+      )
+    }
+
+    updateScrollButtons()
+    window.addEventListener('resize', updateScrollButtons)
+    return () => window.removeEventListener('resize', updateScrollButtons)
+  }, [])
+
+  const scrollCarousel = (direction) => {
+    const carousel = carouselRef.current
+    if (!carousel) {
+      return
+    }
+
+    const firstCard = carousel.querySelector('.solution-card')
+    const gap = Number.parseFloat(getComputedStyle(carousel).columnGap) || 0
+    const distance = firstCard ? firstCard.offsetWidth + gap : 320
+    if (shouldReduceMotion) {
+      carousel.scrollLeft += distance * direction
+      return
+    }
+
+    carousel.scrollBy({
+      left: distance * direction,
+      behavior: 'smooth',
+    })
+  }
+
+  const startCarouselDrag = (event) => {
+    if (event.button !== 0) {
+      return
+    }
+
+    dragStateRef.current = {
+      startX: event.clientX,
+      startScrollLeft: event.currentTarget.scrollLeft,
+      moved: false,
+    }
+    event.currentTarget.classList.add('is-dragging')
+  }
+
+  const moveCarouselDrag = (event) => {
+    const dragState = dragStateRef.current
+    if (!dragState) {
+      return
+    }
+
+    const delta = event.clientX - dragState.startX
+    if (Math.abs(delta) > 4) {
+      dragState.moved = true
+    }
+
+    if (dragState.moved && carouselRef.current) {
+      carouselRef.current.scrollLeft = dragState.startScrollLeft - delta
+    }
+  }
+
+  const stopCarouselDrag = () => {
+    if (carouselRef.current) {
+      carouselRef.current.classList.remove('is-dragging')
+    }
+
+    if (!dragStateRef.current) {
+      return
+    }
+
+    if (dragStateRef.current.moved) {
+      window.setTimeout(() => {
+        if (dragStateRef.current) {
+          dragStateRef.current.moved = false
+        }
+      }, 0)
+    } else {
+      dragStateRef.current = null
+    }
+  }
+
+  return (
+    <>
+      <section
+        className="solutions-section"
+        aria-labelledby="solutions-title"
+        inert={!isReady || activeCard !== null}
+        aria-hidden={!isReady}
+      >
+        <div className="solutions-section-content">
+          <div className="solutions-section-heading">
+            <div>
+              <h2 id="solutions-title">Soluções para cada projeto.</h2>
+            </div>
+          </div>
+
+          <div
+            className="solutions-carousel"
+            ref={carouselRef}
+            onMouseDown={startCarouselDrag}
+            onMouseMove={moveCarouselDrag}
+            onMouseUp={stopCarouselDrag}
+            onMouseLeave={stopCarouselDrag}
+            onClickCapture={(event) => {
+              if (dragStateRef.current?.moved) {
+                event.preventDefault()
+                event.stopPropagation()
+                dragStateRef.current = null
+              }
+            }}
+            onScroll={(event) => {
+              const carousel = event.currentTarget
+              setCanScrollLeft(carousel.scrollLeft > 0)
+              setCanScrollRight(
+                carousel.scrollLeft + carousel.clientWidth <
+                  carousel.scrollWidth - 1,
+              )
+            }}
+            role="region"
+            aria-roledescription="carrossel"
+            aria-label="Soluções TECHNALUM"
+          >
+            {solutionCards.map((card, index) => (
+              <motion.button
+                className="solution-card"
+                key={card.title}
+                type="button"
+                onClick={() => setActiveCard(card)}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                whileInView={
+                  shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+                }
+                viewport={{ once: true, amount: 0.2 }}
+                transition={
+                  shouldReduceMotion
+                    ? { duration: 0 }
+                    : { ...spring, delay: index * 0.08 }
+                }
+                aria-label={`Ver detalhes: ${card.title}`}
+              >
+                <img src={card.image} alt="" loading="lazy" />
+                <span className="solution-card-shade" aria-hidden="true" />
+                <span className="solution-card-content">
+                  <span className="solution-card-category">
+                    {card.category}
+                  </span>
+                  <span className="solution-card-title">{card.title}</span>
+                  <span className="solution-card-action">
+                    Conheça a solução
+                  </span>
+                </span>
+              </motion.button>
+            ))}
+          </div>
+
+          <div className="solutions-carousel-controls">
+            <button
+              className="solutions-carousel-button"
+              type="button"
+              onClick={() => scrollCarousel(-1)}
+              disabled={!canScrollLeft}
+              aria-label="Ver soluções anteriores"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H5m7 7-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              className="solutions-carousel-button"
+              type="button"
+              onClick={() => scrollCarousel(1)}
+              disabled={!canScrollRight}
+              aria-label="Ver próximas soluções"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14m-7-7 7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {createPortal(
+        <AnimatePresence>
+          {activeCard && (
+            <motion.div
+              className="solution-dialog-backdrop"
+              key={activeCard.title}
+              initial={shouldReduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={shouldReduceMotion ? { duration: 0 } : spring}
+            >
+              <motion.article
+                ref={dialogRef}
+                className="solution-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="solution-dialog-title"
+                initial={
+                  shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.97 }
+                }
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.98 }}
+                transition={shouldReduceMotion ? { duration: 0 } : spring}
+              >
+                <button
+                  ref={closeButtonRef}
+                  className="solution-dialog-close"
+                  type="button"
+                  onClick={closeActiveCard}
+                  aria-label="Fechar detalhes da solução"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m6 6 12 12M18 6 6 18" />
+                  </svg>
+                </button>
+                <p className="solution-dialog-category">
+                  {activeCard.category}
+                </p>
+                <h2 id="solution-dialog-title">{activeCard.title}</h2>
+                <p className="solution-dialog-description">
+                  {activeCard.description}
+                </p>
+                <p className="solution-dialog-detail">
+                  Da engenharia à instalação, cada etapa é planejada para
+                  atender às necessidades específicas do projeto.
+                </p>
+              </motion.article>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
+    </>
+  )
+}
 
 function ExperienceCounter({ shouldReduceMotion }) {
   const counterRef = useRef(null)
@@ -94,13 +454,13 @@ function App() {
   })
   const aboutLogoProgress = useTransform(
     aboutScrollProgress,
-    [0, 0.8],
+    [0, 0.65],
     [0, 1],
   )
   const smoothLogoProgress = useSpring(aboutLogoProgress, {
-    stiffness: isMobileMenu ? 140 : 180,
-    damping: isMobileMenu ? 30 : 20,
-    mass: isMobileMenu ? 0.9 : 0.8,
+    stiffness: isMobileMenu ? 240 : 280,
+    damping: 26,
+    mass: 0.65,
   })
   const heroLogoY = useTransform(smoothLogoProgress, (progress) =>
     shouldReduceMotion ? 0 : progress * (30 - window.innerHeight / 2),
@@ -122,9 +482,7 @@ function App() {
   )
   const loaderTransition = shouldReduceMotion
     ? { duration: 0 }
-    : isMobileMenu
-      ? { type: 'spring', stiffness: 150, damping: 30, mass: 0.9 }
-      : spring
+    : { type: 'spring', stiffness: 125, damping: 26, mass: 1 }
 
   useEffect(() => {
     const video = heroVideoRef.current
@@ -266,7 +624,7 @@ function App() {
     })
 
     const minimumDisplayTime = new Promise((resolve) => {
-      window.setTimeout(resolve, 1000)
+      window.setTimeout(resolve, 1600)
     })
 
     Promise.all([
@@ -304,7 +662,6 @@ function App() {
           initial={false}
           animate={{
             y: loaderState === 'exiting' ? '100%' : '0%',
-            opacity: loaderState === 'exiting' ? 0 : 1,
           }}
           transition={loaderTransition}
           onAnimationComplete={() => {
@@ -565,6 +922,11 @@ function App() {
         </div>
       </section>
       </div>
+
+      <SolutionsSection
+        shouldReduceMotion={shouldReduceMotion}
+        isReady={loaderState === 'hidden'}
+      />
 
       <motion.div
         className={`brand-overlay${menuOpen && isMobileMenu ? ' is-menu-open' : ''}`}
