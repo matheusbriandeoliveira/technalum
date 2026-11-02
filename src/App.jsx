@@ -97,11 +97,16 @@ function App() {
     [0, 0.8],
     [0, 1],
   )
-  const heroLogoY = useTransform(aboutLogoProgress, (progress) =>
+  const smoothLogoProgress = useSpring(aboutLogoProgress, {
+    stiffness: isMobileMenu ? 140 : 180,
+    damping: isMobileMenu ? 30 : 20,
+    mass: isMobileMenu ? 0.9 : 0.8,
+  })
+  const heroLogoY = useTransform(smoothLogoProgress, (progress) =>
     shouldReduceMotion ? 0 : progress * (30 - window.innerHeight / 2),
   )
   const heroLogoScale = useTransform(
-    aboutLogoProgress,
+    smoothLogoProgress,
     [0, 1],
     [1, shouldReduceMotion ? 1 : 0.32],
   )
@@ -115,6 +120,43 @@ function App() {
     [0, 1],
     shouldReduceMotion ? [1, 1] : [1, 1.08],
   )
+  const loaderTransition = shouldReduceMotion
+    ? { duration: 0 }
+    : isMobileMenu
+      ? { type: 'spring', stiffness: 150, damping: 30, mass: 0.9 }
+      : spring
+
+  useEffect(() => {
+    const video = heroVideoRef.current
+    if (!video) {
+      return undefined
+    }
+
+    const startPlayback = () => {
+      if (document.visibilityState !== 'visible' || !video.paused) {
+        return
+      }
+
+      video.muted = true
+      video.playsInline = true
+      video.play().catch((error) => {
+        console.error(
+          'Não foi possível iniciar automaticamente o vídeo do hero',
+          error,
+        )
+      })
+    }
+
+    video.addEventListener('canplay', startPlayback)
+    document.addEventListener('visibilitychange', startPlayback)
+    startPlayback()
+
+    return () => {
+      video.removeEventListener('canplay', startPlayback)
+      document.removeEventListener('visibilitychange', startPlayback)
+    }
+  }, [])
+
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 600px)')
     const updateMenuMode = () => {
@@ -260,8 +302,11 @@ function App() {
           aria-label="Carregando site"
           aria-hidden={loaderState === 'exiting'}
           initial={false}
-          animate={{ y: loaderState === 'exiting' ? '100%' : '0%' }}
-          transition={animationTransition}
+          animate={{
+            y: loaderState === 'exiting' ? '100%' : '0%',
+            opacity: loaderState === 'exiting' ? 0 : 1,
+          }}
+          transition={loaderTransition}
           onAnimationComplete={() => {
             if (loaderState === 'exiting') {
               setLoaderState('hidden')
@@ -272,7 +317,7 @@ function App() {
             className="preloader-content"
             initial={shouldReduceMotion ? false : { opacity: 0, y: 14, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={animationTransition}
+            transition={loaderTransition}
           >
             <img className="preloader-logo" src="/logoSemFundo.png" alt="" />
             <span className="preloader-progress" aria-hidden="true">
@@ -319,6 +364,7 @@ function App() {
             muted
             loop
             playsInline
+            controls={false}
             preload="auto"
           />
         </div>
