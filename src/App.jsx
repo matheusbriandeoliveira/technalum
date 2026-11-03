@@ -18,43 +18,67 @@ const solutionCards = [
     category: 'ESQUADRIAS',
     title: 'Esquadrias de Alumínio',
     image: '/carrossel/esquadriasdealuminio.png',
-    description:
-      'Soluções sob medida que integram conforto, desempenho e desenho arquitetônico.',
-  },
-  {
-    category: 'VÃOS ENVIDRAÇADOS',
-    title: 'Caixilhos',
-    image: '/carrossel/caixilios.png',
-    description:
-      'Caixilhos sob medida que valorizam a entrada de luz, o conforto e a integração dos ambientes.',
-  },
-  {
-    category: 'SISTEMAS ENVIDRAÇADOS',
-    title: 'Structural Glazing',
-    image: '/carrossel/glazing.png',
-    description:
-      'Sistemas envidraçados com precisão técnica, transparência e integração à arquitetura.',
+    description: [
+      'As esquadrias de alumínio são utilizadas na fabricação de portas, janelas e sistemas de fechamento para projetos residenciais e comerciais. Oferecem resistência à corrosão, durabilidade e versatilidade, permitindo diferentes dimensões, modelos e acabamentos.',
+      'São soluções que favorecem a entrada de luz natural, a ventilação e a integração entre ambientes internos e externos, acompanhando as necessidades de cada projeto arquitetônico.',
+    ],
+    detail:
+      'Soluções desenvolvidas sob medida, considerando dimensões, tipos de abertura, acabamentos e necessidades de cada ambiente.',
   },
   {
     category: 'SEGURANÇA',
     title: 'Guarda-corpos',
     image: '/carrossel/guardaCorpos.png',
-    description:
-      'Segurança e leveza visual para valorizar projetos residenciais e corporativos.',
+    description: [
+      'Os guarda-corpos são sistemas de proteção instalados em sacadas, varandas, escadas, mezaninos e áreas elevadas. Fabricados com estruturas de alumínio e diferentes configurações de vidro, proporcionam segurança sem comprometer a visibilidade e a estética dos ambientes.',
+      'Sua aplicação permite criar espaços mais abertos e integrados, valorizando a arquitetura com linhas discretas e acabamento contemporâneo.',
+    ],
+    detail:
+      'Projetados para proporcionar segurança em áreas elevadas, respeitando as características arquitetônicas e as exigências técnicas de cada instalação.',
+  },
+  {
+    category: 'VÃOS ENVIDRAÇADOS',
+    title: 'Caixilhos',
+    image: '/carrossel/caixilios.png',
+    description: [
+      'Os caixilhos são estruturas responsáveis por sustentar e acomodar vidros em portas, janelas e outros sistemas de fechamento. Produzidos em alumínio, podem ser desenvolvidos em diferentes formatos e configurações, conforme as características de cada projeto.',
+      'Além de oferecerem resistência e estabilidade, contribuem para a vedação, o funcionamento das aberturas e a qualidade do acabamento, sendo elementos fundamentais na composição das fachadas e dos ambientes.',
+    ],
+    detail:
+      'Cada estrutura é dimensionada conforme o projeto, considerando encaixes, sistemas de abertura, vedação e desempenho.',
+  },
+  {
+    category: 'SISTEMAS ENVIDRAÇADOS',
+    title: 'Structural Glazing',
+    image: '/carrossel/glazing.png',
+    description: [
+      'O Structural Glazing é um sistema de fachada envidraçada que utiliza fixação estrutural para integrar os painéis de vidro à estrutura de suporte. Sua principal característica é a aparência contínua da superfície envidraçada, com perfis pouco aparentes pelo lado externo.',
+      'Muito utilizado em fachadas residenciais e comerciais contemporâneas, permite explorar grandes áreas de vidro, proporcionando iluminação natural, amplitude visual e uma estética arquitetônica sofisticada.',
+    ],
+    detail:
+      'Sistemas desenvolvidos conforme as exigências da fachada, integrando estrutura e vidro para alcançar um acabamento contínuo e preciso.',
   },
   {
     category: 'ÁREAS DE CONVIVÊNCIA',
     title: 'Pergolados com Vidro',
     image: '/carrossel/pergoladocomvidro.png',
-    description:
-      'Estruturas que ampliam áreas de convivência, preservando a entrada de luz natural.',
+    description: [
+      'Os pergolados com vidro são estruturas projetadas para cobrir e valorizar áreas externas, como jardins, corredores, terraços, varandas e espaços de convivência. Combinam perfis estruturais com painéis de vidro, permitindo a entrada de iluminação natural enquanto oferecem proteção contra a chuva.',
+      'São soluções que ampliam as possibilidades de utilização dos ambientes externos, criando espaços mais confortáveis e integrados à arquitetura da residência.',
+    ],
+    detail:
+      'Estruturas planejadas de acordo com o espaço disponível, considerando cobertura, escoamento da água e integração com o ambiente.',
   },
   {
     category: 'PORTAS',
     title: 'Portas Pivotantes',
     image: '/carrossel/portaspivotantes.png',
-    description:
-      'Portas de entrada com presença marcante, proporções elegantes e acabamento sob medida.',
+    description: [
+      'As portas pivotantes utilizam um sistema de abertura baseado em pivôs instalados nas extremidades superior e inferior da folha, permitindo sua rotação em torno de um eixo vertical. Esse mecanismo possibilita a criação de portas de grandes dimensões, muito utilizadas em entradas principais de residências e projetos arquitetônicos contemporâneos.',
+      'Além de sua funcionalidade, destacam-se pela presença visual, variedade de acabamentos e capacidade de transformar a entrada em um elemento marcante da fachada.',
+    ],
+    detail:
+      'Desenvolvidas conforme as dimensões e características da entrada, com atenção ao sistema de abertura, estabilidade e acabamento.',
   },
 ]
 const solutions = [
@@ -375,28 +399,52 @@ function SolutionsSection({ shouldReduceMotion, isReady }) {
                 exit={{ opacity: 0, y: 16, scale: 0.98 }}
                 transition={shouldReduceMotion ? { duration: 0 } : spring}
               >
-                <button
-                  ref={closeButtonRef}
-                  className="solution-dialog-close"
-                  type="button"
-                  onClick={closeActiveCard}
-                  aria-label="Fechar detalhes da solução"
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m6 6 12 12M18 6 6 18" />
-                  </svg>
-                </button>
-                <p className="solution-dialog-category">
-                  {activeCard.category}
-                </p>
-                <h2 id="solution-dialog-title">{activeCard.title}</h2>
-                <p className="solution-dialog-description">
-                  {activeCard.description}
-                </p>
-                <p className="solution-dialog-detail">
-                  Da engenharia à instalação, cada etapa é planejada para
-                  atender às necessidades específicas do projeto.
-                </p>
+                <header className="solution-dialog-header">
+                  <img
+                    className="solution-dialog-image"
+                    src={activeCard.image}
+                    alt=""
+                  />
+                  <span
+                    className="solution-dialog-image-shade"
+                    aria-hidden="true"
+                  />
+                  <button
+                    ref={closeButtonRef}
+                    className="solution-dialog-close"
+                    type="button"
+                    onClick={closeActiveCard}
+                    aria-label="Fechar detalhes da solução"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m6 6 12 12M18 6 6 18" />
+                    </svg>
+                  </button>
+                  <div className="solution-dialog-heading">
+                    <p className="solution-dialog-category">
+                      {activeCard.category}
+                    </p>
+                    <h2 id="solution-dialog-title">{activeCard.title}</h2>
+                  </div>
+                </header>
+                <div className="solution-dialog-content">
+                  {activeCard.description.map((paragraph) => (
+                    <p className="solution-dialog-description" key={paragraph}>
+                      {paragraph}
+                    </p>
+                  ))}
+                  <hr className="solution-dialog-divider" />
+                  <h3 className="solution-dialog-subtitle">
+                    Sobre a execução
+                  </h3>
+                  <p className="solution-dialog-detail">{activeCard.detail}</p>
+                  <a className="solution-dialog-cta" href="#contato">
+                    SOLICITAR ORÇAMENTO
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M5 12h14m-7-7 7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
               </motion.article>
             </motion.div>
           )}
