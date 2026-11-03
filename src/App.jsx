@@ -542,7 +542,7 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
             </ScrollReveal>
           </div>
           <PartnerBrandCarousel shouldReduceMotion={shouldReduceMotion} />
-          <ScrollReveal as="p" className="partners-description">
+          <ScrollReveal as="p" className="partners-description" delay={0.12}>
             Trabalhamos com marcas especializadas que fazem parte das soluções
             que entregamos.
           </ScrollReveal>
@@ -575,7 +575,7 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
           <ScrollReveal as="h2" id="contact-title">
             Seu projeto começa por aqui.
           </ScrollReveal>
-          <ScrollReveal as="p">
+          <ScrollReveal as="p" delay={0.12}>
             Uma solução específica, uma nova possibilidade ou orientação para
             escolher melhor. Nossa equipe está aqui para ajudar.
           </ScrollReveal>
@@ -1158,7 +1158,6 @@ function App() {
               as="h1"
               className="about-title"
               id="about-title"
-              amount={0.4}
             >
               Da engenharia à instalação, soluções em esquadrias e fachadas
               para projetos que exigem precisão.
@@ -1166,8 +1165,7 @@ function App() {
             <ScrollReveal
               as="p"
               className="about-description"
-              amount={0.4}
-              delay={0.1}
+              delay={0.12}
             >
               Há 26 anos, desenvolvemos soluções em esquadrias e
               fachadas, reunindo engenharia própria, estrutura de fabricação e
@@ -1178,35 +1176,26 @@ function App() {
 
           <ul className="about-highlights" aria-label="Diferenciais TECHNALUM">
             {companyHighlights.map((highlight, index) => (
-              <motion.li
-                className="about-highlight"
-                key={highlight.value}
-                initial={
-                  shouldReduceMotion
-                    ? false
-                    : { opacity: 0, filter: 'blur(8px)', y: 14 }
-                }
-                whileInView={
-                  shouldReduceMotion
-                    ? undefined
-                    : { opacity: 1, filter: 'blur(0px)', y: 0 }
-                }
-                viewport={{ once: true, amount: 0.3 }}
-                transition={
-                  shouldReduceMotion
-                    ? { duration: 0 }
-                    : { ...spring, delay: index * 0.1 }
-                }
-              >
+              <li className="about-highlight" key={highlight.value}>
                 {highlight.value === '26+' ? (
                   <ExperienceCounter shouldReduceMotion={shouldReduceMotion} />
                 ) : (
-                  <h2 className="about-highlight-value">{highlight.value}</h2>
+                  <ScrollReveal
+                    as="h2"
+                    className="about-highlight-value"
+                    delay={index * 0.1}
+                  >
+                    {highlight.value}
+                  </ScrollReveal>
                 )}
-                <p className="about-highlight-description">
+                <ScrollReveal
+                  as="p"
+                  className="about-highlight-description"
+                  delay={index * 0.1 + 0.08}
+                >
                   {highlight.description}
-                </p>
-              </motion.li>
+                </ScrollReveal>
+              </li>
             ))}
           </ul>
         </div>
@@ -1220,7 +1209,7 @@ function App() {
       />
 
       <footer className="site-footer">
-        <ScrollReveal className="site-footer-content" amount={0.05}>
+        <div className="site-footer-content">
           <div className="footer-brand">
             <img
               className="footer-logo"
@@ -1228,12 +1217,14 @@ function App() {
               alt="TECHNALUM"
               loading="lazy"
             />
-            <p className="footer-tagline">
+            <ScrollReveal as="p" className="footer-tagline" delay={0.08}>
               Há 26 anos construindo histórias em alumínio.
-            </p>
+            </ScrollReveal>
           </div>
           <nav className="footer-legal-links" aria-label="Informações legais">
-            <h2 className="footer-section-title">Informações legais</h2>
+            <ScrollReveal as="h2" className="footer-section-title" delay={0.12}>
+              Informações legais
+            </ScrollReveal>
             <a href="/politica-de-privacidade.html">
               Política de Privacidade
             </a>
@@ -1241,18 +1232,20 @@ function App() {
             <a href="/politica-de-cookies.html">Política de Cookies</a>
           </nav>
           <div className="footer-contact">
-            <h2 className="footer-section-title">Contato</h2>
+            <ScrollReveal as="h2" className="footer-section-title" delay={0.16}>
+              Contato
+            </ScrollReveal>
             <a href="tel:+5514997732211">(14) 99773-2211</a>
             <a href="mailto:contato2@technalum.com.br">
               contato2@technalum.com.br
             </a>
           </div>
           <div className="footer-social-group">
-            <h2 className="footer-section-title">
+            <ScrollReveal as="h2" className="footer-section-title" delay={0.2}>
               Acompanhe nossas
               <br />
               redes sociais!
-            </h2>
+            </ScrollReveal>
             <div className="footer-socials" aria-label="Redes sociais">
               <a
                 className="footer-social-link"
@@ -1275,10 +1268,12 @@ function App() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p className="footer-copyright">
+            <ScrollReveal as="p" className="footer-copyright">
               © 2026 Technalum Esquadrias e Fachadas.
-            </p>
-            <p className="footer-cnpj">CNPJ: 04.023.900/0001-05</p>
+            </ScrollReveal>
+            <ScrollReveal as="p" className="footer-cnpj">
+              CNPJ: 04.023.900/0001-05
+            </ScrollReveal>
             <a
               className="footer-credit"
               href="https://wa.me/5514991749010"
@@ -1289,7 +1284,7 @@ function App() {
               Desenvolvido por <span>Venovra</span>
             </a>
           </div>
-        </ScrollReveal>
+        </div>
       </footer>
 
       <motion.div

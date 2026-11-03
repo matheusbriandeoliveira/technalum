@@ -180,11 +180,13 @@ export function LegalPage() {
         <ScrollReveal as="p" className="legal-eyebrow">
           INFORMAÇÕES LEGAIS
         </ScrollReveal>
-        <ScrollReveal as="h1">{page.title}</ScrollReveal>
-        <ScrollReveal as="p" className="legal-intro">
+        <ScrollReveal as="h1" delay={0.08}>
+          {page.title}
+        </ScrollReveal>
+        <ScrollReveal as="p" className="legal-intro" delay={0.16}>
           {page.description}
         </ScrollReveal>
-        <ScrollReveal as="p" className="legal-updated">
+        <ScrollReveal as="p" className="legal-updated" delay={0.24}>
           Última atualização: 3 de novembro de 2026
         </ScrollReveal>
 
@@ -192,8 +194,12 @@ export function LegalPage() {
           {page.sections.map((section) => (
             <section className="legal-section" key={section.title}>
               <ScrollReveal as="h2">{section.title}</ScrollReveal>
-              {section.paragraphs.map((paragraph) => (
-                <ScrollReveal as="p" key={paragraph}>
+              {section.paragraphs.map((paragraph, paragraphIndex) => (
+                <ScrollReveal
+                  as="p"
+                  key={paragraph}
+                  delay={(paragraphIndex + 1) * 0.1}
+                >
                   {paragraph}
                 </ScrollReveal>
               ))}
@@ -213,12 +219,10 @@ export function LegalPage() {
       </main>
 
       <footer className="legal-footer">
-        <ScrollReveal as="span" amount={0.05}>
+        <ScrollReveal as="span">
           © 2026 Technalum Esquadrias e Fachadas.
         </ScrollReveal>
-        <ScrollReveal as="span" amount={0.05}>
-          <a href="/">Página inicial</a>
-        </ScrollReveal>
+        <a href="/">Página inicial</a>
       </footer>
     </div>
   )

@@ -73,33 +73,25 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
   }
 
   return (
-    <motion.section
+    <section
       className="catalog-solution"
       id={solution.id}
       aria-labelledby={`${solution.id}-title`}
-      initial={
-        prefersReducedMotion
-          ? false
-          : { opacity: 0, filter: 'blur(8px)', y: 28 }
-      }
-      whileInView={
-        prefersReducedMotion
-          ? undefined
-          : { opacity: 1, filter: 'blur(0px)', y: 0 }
-      }
-      viewport={{ once: true, amount: 0.12 }}
-      transition={
-        prefersReducedMotion
-          ? { duration: 0 }
-          : { duration: 0.65, delay: Math.min(index * 0.04, 0.2) }
-      }
     >
       <div className="catalog-solution-heading">
-        <p className="catalog-solution-index">
+        <ScrollReveal as="p" className="catalog-solution-index">
           {String(index + 1).padStart(2, '0')}
-        </p>
-        <h2 id={`${solution.id}-title`}>{solution.title}</h2>
-        <p className="catalog-solution-description">{solution.description}</p>
+        </ScrollReveal>
+        <ScrollReveal as="h2" id={`${solution.id}-title`} delay={0.08}>
+          {solution.title}
+        </ScrollReveal>
+        <ScrollReveal
+          as="p"
+          className="catalog-solution-description"
+          delay={0.16}
+        >
+          {solution.description}
+        </ScrollReveal>
       </div>
 
       <div className="catalog-gallery">
@@ -197,14 +189,14 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }
 
 function CatalogFooter() {
   return (
     <footer className="site-footer">
-      <ScrollReveal className="site-footer-content" amount={0.05}>
+      <div className="site-footer-content">
         <div className="footer-brand">
           <img
             className="footer-logo"
@@ -212,29 +204,33 @@ function CatalogFooter() {
             alt="TECHNALUM"
             loading="lazy"
           />
-          <p className="footer-tagline">
+          <ScrollReveal as="p" className="footer-tagline" delay={0.08}>
             Há 26 anos construindo histórias em alumínio.
-          </p>
+          </ScrollReveal>
         </div>
         <nav className="footer-legal-links" aria-label="Informações legais">
-          <h2 className="footer-section-title">Informações legais</h2>
+          <ScrollReveal as="h2" className="footer-section-title" delay={0.12}>
+            Informações legais
+          </ScrollReveal>
           <a href="/politica-de-privacidade.html">Política de Privacidade</a>
           <a href="/termos-de-uso.html">Termos de Uso</a>
           <a href="/politica-de-cookies.html">Política de Cookies</a>
         </nav>
         <div className="footer-contact">
-          <h2 className="footer-section-title">Contato</h2>
+          <ScrollReveal as="h2" className="footer-section-title" delay={0.16}>
+            Contato
+          </ScrollReveal>
           <a href="tel:+5514997732211">(14) 99773-2211</a>
           <a href="mailto:contato2@technalum.com.br">
             contato2@technalum.com.br
           </a>
         </div>
         <div className="footer-social-group">
-          <h2 className="footer-section-title">
+          <ScrollReveal as="h2" className="footer-section-title" delay={0.2}>
             Acompanhe nossas
             <br />
             redes sociais!
-          </h2>
+          </ScrollReveal>
           <div className="footer-socials" aria-label="Redes sociais">
             <a
               className="footer-social-link"
@@ -257,10 +253,12 @@ function CatalogFooter() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p className="footer-copyright">
+          <ScrollReveal as="p" className="footer-copyright">
             © 2026 Technalum Esquadrias e Fachadas.
-          </p>
-          <p className="footer-cnpj">CNPJ: 04.023.900/0001-05</p>
+          </ScrollReveal>
+          <ScrollReveal as="p" className="footer-cnpj">
+            CNPJ: 04.023.900/0001-05
+          </ScrollReveal>
           <a
             className="footer-credit"
             href="https://wa.me/5514991749010"
@@ -271,7 +269,7 @@ function CatalogFooter() {
             Desenvolvido por <span>Venovra</span>
           </a>
         </div>
-      </ScrollReveal>
+      </div>
     </footer>
   )
 }
@@ -317,10 +315,10 @@ export default function SolutionsPage() {
           <ScrollReveal as="p" className="catalog-intro-eyebrow">
             TECHNALUM · ESQUADRIAS E FACHADAS
           </ScrollReveal>
-          <ScrollReveal as="h1" id="catalog-title">
+          <ScrollReveal as="h1" id="catalog-title" delay={0.08}>
             Soluções
           </ScrollReveal>
-          <ScrollReveal as="p">
+          <ScrollReveal as="p" delay={0.16}>
             Da engenharia à instalação, desenvolvemos soluções em esquadrias e
             fachadas que unem funcionalidade, precisão e estética para diferentes
             projetos arquitetônicos.
@@ -359,7 +357,7 @@ export default function SolutionsPage() {
             <ScrollReveal as="h2" id="contact-title">
               Seu projeto começa por aqui.
             </ScrollReveal>
-            <ScrollReveal as="p">
+            <ScrollReveal as="p" delay={0.12}>
               Uma solução específica, uma nova possibilidade ou orientação para
               escolher melhor. Nossa equipe está aqui para ajudar.
             </ScrollReveal>

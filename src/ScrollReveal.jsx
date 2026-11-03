@@ -5,6 +5,7 @@ const revealElements = {
   h1: motion.h1,
   h2: motion.h2,
   h3: motion.h3,
+  li: motion.li,
   p: motion.p,
   span: motion.span,
 }
@@ -18,6 +19,9 @@ export default function ScrollReveal({
 }) {
   const shouldReduceMotion = useReducedMotion()
   const Element = revealElements[as] || motion.div
+  const isMobile =
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(max-width: 600px)').matches
 
   return (
     <Element
@@ -25,7 +29,7 @@ export default function ScrollReveal({
       initial={
         shouldReduceMotion
           ? false
-          : { opacity: 0, filter: 'blur(8px)', y: 12 }
+          : { opacity: 0, filter: 'blur(6px)', y: isMobile ? 12 : 20 }
       }
       whileInView={
         shouldReduceMotion
@@ -36,7 +40,7 @@ export default function ScrollReveal({
       transition={
         shouldReduceMotion
           ? { duration: 0 }
-          : { duration: 0.72, delay, ease: [0.22, 1, 0.36, 1] }
+          : { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }
       }
     >
       {children}
