@@ -10,11 +10,13 @@ import {
   useTransform,
 } from 'motion/react'
 import { createPortal } from 'react-dom'
+import ScrollReveal from './ScrollReveal.jsx'
 import './App.css'
 
 const spring = { type: 'spring', stiffness: 180, damping: 20, mass: 0.8 }
 const solutionCards = [
   {
+    id: 'esquadrias-de-aluminio',
     category: 'ESQUADRIAS',
     title: 'Esquadrias de Alumínio',
     image: '/carrossel/esquadriasdealuminio.png',
@@ -26,6 +28,7 @@ const solutionCards = [
       'Soluções desenvolvidas sob medida, considerando dimensões, tipos de abertura, acabamentos e necessidades de cada ambiente.',
   },
   {
+    id: 'guarda-corpos',
     category: 'SEGURANÇA',
     title: 'Guarda-corpos',
     image: '/carrossel/guardaCorpos.png',
@@ -37,6 +40,7 @@ const solutionCards = [
       'Projetados para proporcionar segurança em áreas elevadas, respeitando as características arquitetônicas e as exigências técnicas de cada instalação.',
   },
   {
+    id: 'caixilhos',
     category: 'VÃOS ENVIDRAÇADOS',
     title: 'Caixilhos',
     image: '/carrossel/caixilios.png',
@@ -48,6 +52,7 @@ const solutionCards = [
       'Cada estrutura é dimensionada conforme o projeto, considerando encaixes, sistemas de abertura, vedação e desempenho.',
   },
   {
+    id: 'structural-glazing',
     category: 'SISTEMAS ENVIDRAÇADOS',
     title: 'Structural Glazing',
     image: '/carrossel/glazing.png',
@@ -59,6 +64,7 @@ const solutionCards = [
       'Sistemas desenvolvidos conforme as exigências da fachada, integrando estrutura e vidro para alcançar um acabamento contínuo e preciso.',
   },
   {
+    id: 'pergolados-com-vidro',
     category: 'ÁREAS DE CONVIVÊNCIA',
     title: 'Pergolados com Vidro',
     image: '/carrossel/pergoladocomvidro.png',
@@ -70,6 +76,7 @@ const solutionCards = [
       'Estruturas planejadas de acordo com o espaço disponível, considerando cobertura, escoamento da água e integração com o ambiente.',
   },
   {
+    id: 'portas-pivotantes',
     category: 'PORTAS',
     title: 'Portas Pivotantes',
     image: '/carrossel/portaspivotantes.png',
@@ -243,31 +250,12 @@ function PartnerBrandCarousel({ shouldReduceMotion }) {
   )
 }
 
-function useOutsideClick(ref, callback) {
-  useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (!ref.current || ref.current.contains(event.target)) {
-        return
-      }
-
-      callback(event)
-    }
-
-    document.addEventListener('mousedown', handleOutsideClick)
-    document.addEventListener('touchstart', handleOutsideClick)
-
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick)
-      document.removeEventListener('touchstart', handleOutsideClick)
-    }
-  }, [callback, ref])
-}
-
 function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
   const carouselRef = useRef(null)
   const dragStateRef = useRef(null)
   const dialogRef = useRef(null)
   const closeButtonRef = useRef(null)
+  const dialogTriggerRef = useRef(null)
   const { scrollYProgress: contactScrollProgress } = useScroll({
     target: contactSectionRef,
     offset: ['start end', 'end start'],
@@ -277,12 +265,10 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
     [0, 1],
     shouldReduceMotion ? [0, 0] : [-34, 34],
   )
-  const [activeCard, setActiveCard] = useState(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
+  const [activeCard, setActiveCard] = useState(null)
   const closeActiveCard = useCallback(() => setActiveCard(null), [])
-
-  useOutsideClick(dialogRef, closeActiveCard)
 
   useEffect(() => {
     if (!activeCard) {
@@ -290,7 +276,6 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
     }
 
     const previousBodyOverflow = document.body.style.overflow
-    const previouslyFocusedElement = document.activeElement
     const appRoot = document.getElementById('root')
     const wasAppRootInert = appRoot?.inert ?? false
     document.body.style.overflow = 'hidden'
@@ -299,26 +284,44 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
     }
     closeButtonRef.current?.focus()
 
-    const closeOnEscape = (event) => {
+    const handleDialogKeyDown = (event) => {
       if (event.key === 'Escape') {
+        event.preventDefault()
         closeActiveCard()
         return
       }
 
-      if (event.key === 'Tab') {
+      if (event.key !== 'Tab') {
+        return
+      }
+
+      const focusableElements = dialogRef.current?.querySelectorAll(
+        'button:not([disabled]), a[href]',
+      )
+      if (!focusableElements?.length) {
         event.preventDefault()
-        closeButtonRef.current?.focus()
+        return
+      }
+
+      const firstElement = focusableElements[0]
+      const lastElement = focusableElements[focusableElements.length - 1]
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault()
+        lastElement.focus()
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault()
+        firstElement.focus()
       }
     }
 
-    window.addEventListener('keydown', closeOnEscape)
+    window.addEventListener('keydown', handleDialogKeyDown)
     return () => {
       document.body.style.overflow = previousBodyOverflow
       if (appRoot) {
         appRoot.inert = wasAppRootInert
       }
-      window.removeEventListener('keydown', closeOnEscape)
-      previouslyFocusedElement?.focus?.()
+      window.removeEventListener('keydown', handleDialogKeyDown)
+      dialogTriggerRef.current?.focus()
     }
   }, [activeCard, closeActiveCard])
 
@@ -425,7 +428,9 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
         <div className="solutions-section-content">
           <div className="solutions-section-heading">
             <div>
-              <h2 id="solutions-title">Soluções para cada projeto.</h2>
+              <ScrollReveal as="h2" id="solutions-title">
+                Soluções para cada projeto.
+              </ScrollReveal>
             </div>
           </div>
 
@@ -460,10 +465,19 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
                 className="solution-card"
                 key={card.title}
                 type="button"
-                onClick={() => setActiveCard(card)}
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                onClick={(event) => {
+                  dialogTriggerRef.current = event.currentTarget
+                  setActiveCard(card)
+                }}
+                initial={
+                  shouldReduceMotion
+                    ? false
+                    : { opacity: 0, filter: 'blur(8px)', y: 18 }
+                }
                 whileInView={
-                  shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 1, filter: 'blur(0px)', y: 0 }
                 }
                 viewport={{ once: true, amount: 0.05 }}
                 transition={
@@ -523,13 +537,15 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
       >
         <div className="partners-section-content">
           <div className="partners-section-heading">
-            <h2 id="partners-title">A qualidade começa nas escolhas.</h2>
+            <ScrollReveal as="h2" id="partners-title">
+              A qualidade começa nas escolhas.
+            </ScrollReveal>
           </div>
           <PartnerBrandCarousel shouldReduceMotion={shouldReduceMotion} />
-          <p className="partners-description">
+          <ScrollReveal as="p" className="partners-description">
             Trabalhamos com marcas especializadas que fazem parte das soluções
             que entregamos.
-          </p>
+          </ScrollReveal>
           <ul className="visually-hidden" aria-label="Marcas parceiras">
             {partnerBrands.map((brand) => (
               <li key={brand.name}>{brand.name}</li>
@@ -556,11 +572,13 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
           />
         </div>
         <div className="contact-content">
-          <h2 id="contact-title">Seu projeto começa por aqui.</h2>
-          <p>
+          <ScrollReveal as="h2" id="contact-title">
+            Seu projeto começa por aqui.
+          </ScrollReveal>
+          <ScrollReveal as="p">
             Uma solução específica, uma nova possibilidade ou orientação para
             escolher melhor. Nossa equipe está aqui para ajudar.
-          </p>
+          </ScrollReveal>
           <a
             className="contact-cta"
             href="https://wa.me/?text=Ol%C3%A1%2C%20gostaria%20de%20conversar%20sobre%20meu%20projeto."
@@ -580,11 +598,16 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
           {activeCard && (
             <motion.div
               className="solution-dialog-backdrop"
-              key={activeCard.title}
+              key={activeCard.id}
               initial={shouldReduceMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={shouldReduceMotion ? { duration: 0 } : spring}
+              onMouseDown={(event) => {
+                if (event.target === event.currentTarget) {
+                  closeActiveCard()
+                }
+              }}
             >
               <motion.article
                 ref={dialogRef}
@@ -638,12 +661,17 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
                     Sobre a execução
                   </h3>
                   <p className="solution-dialog-detail">{activeCard.detail}</p>
-                  <a className="solution-dialog-cta" href="#contato">
-                    SOLICITAR ORÇAMENTO
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M5 12h14m-7-7 7 7-7 7" />
-                    </svg>
-                  </a>
+                  <div className="solution-dialog-actions">
+                    <a
+                      className="solution-dialog-cta"
+                      href={`/solucoes.html#${activeCard.id}`}
+                    >
+                      CONHEÇA A SOLUÇÃO
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h14m-7-7 7 7-7 7" />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </motion.article>
             </motion.div>
@@ -651,6 +679,7 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
         </AnimatePresence>,
         document.body,
       )}
+
     </>
   )
 }
@@ -1076,6 +1105,13 @@ function App() {
         </a>
         <a
           className="nav-link"
+          href="/solucoes.html"
+          onClick={() => setMenuOpen(false)}
+        >
+          Soluções
+        </a>
+        <a
+          className="nav-link"
           href="#contato"
           onClick={() => setMenuOpen(false)}
         >
@@ -1118,33 +1154,26 @@ function App() {
       >
         <div className="about-content">
           <div className="about-intro">
-            <motion.h1
+            <ScrollReveal
+              as="h1"
               className="about-title"
               id="about-title"
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={shouldReduceMotion ? { duration: 0 } : spring}
+              amount={0.4}
             >
               Da engenharia à instalação, soluções em esquadrias e fachadas
               para projetos que exigem precisão.
-            </motion.h1>
-            <motion.p
+            </ScrollReveal>
+            <ScrollReveal
+              as="p"
               className="about-description"
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={
-                shouldReduceMotion
-                  ? { duration: 0 }
-                  : { ...spring, delay: 0.1 }
-              }
+              amount={0.4}
+              delay={0.1}
             >
               Há 26 anos, desenvolvemos soluções em esquadrias e
               fachadas, reunindo engenharia própria, estrutura de fabricação e
               profissionais especializados para atender projetos residenciais
               e construtoras.
-            </motion.p>
+            </ScrollReveal>
           </div>
 
           <ul className="about-highlights" aria-label="Diferenciais TECHNALUM">
@@ -1152,9 +1181,15 @@ function App() {
               <motion.li
                 className="about-highlight"
                 key={highlight.value}
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+                initial={
+                  shouldReduceMotion
+                    ? false
+                    : { opacity: 0, filter: 'blur(8px)', y: 14 }
+                }
                 whileInView={
-                  shouldReduceMotion ? undefined : { opacity: 1, y: 0 }
+                  shouldReduceMotion
+                    ? undefined
+                    : { opacity: 1, filter: 'blur(0px)', y: 0 }
                 }
                 viewport={{ once: true, amount: 0.3 }}
                 transition={
@@ -1184,6 +1219,79 @@ function App() {
         contactSectionRef={contactSectionRef}
       />
 
+      <footer className="site-footer">
+        <ScrollReveal className="site-footer-content" amount={0.05}>
+          <div className="footer-brand">
+            <img
+              className="footer-logo"
+              src="/logoSemFundo.png"
+              alt="TECHNALUM"
+              loading="lazy"
+            />
+            <p className="footer-tagline">
+              Há 26 anos construindo histórias em alumínio.
+            </p>
+          </div>
+          <nav className="footer-legal-links" aria-label="Informações legais">
+            <h2 className="footer-section-title">Informações legais</h2>
+            <a href="/politica-de-privacidade.html">
+              Política de Privacidade
+            </a>
+            <a href="/termos-de-uso.html">Termos de Uso</a>
+            <a href="/politica-de-cookies.html">Política de Cookies</a>
+          </nav>
+          <div className="footer-contact">
+            <h2 className="footer-section-title">Contato</h2>
+            <a href="tel:+5514997732211">(14) 99773-2211</a>
+            <a href="mailto:contato2@technalum.com.br">
+              contato2@technalum.com.br
+            </a>
+          </div>
+          <div className="footer-social-group">
+            <h2 className="footer-section-title">
+              Acompanhe nossas
+              <br />
+              redes sociais!
+            </h2>
+            <div className="footer-socials" aria-label="Redes sociais">
+              <a
+                className="footer-social-link"
+                href="https://www.whatsapp.com/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="WhatsApp"
+              >
+                <img src="/whatsapp.png" alt="" />
+              </a>
+              <a
+                className="footer-social-link"
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+              >
+                <img src="/instagram.png" alt="" />
+              </a>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p className="footer-copyright">
+              © 2026 Technalum Esquadrias e Fachadas.
+            </p>
+            <p className="footer-cnpj">CNPJ: 04.023.900/0001-05</p>
+            <a
+              className="footer-credit"
+              href="https://wa.me/5514991749010"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Fale com a Venovra pelo WhatsApp"
+            >
+              Desenvolvido por <span>Venovra</span>
+            </a>
+          </div>
+        </ScrollReveal>
+      </footer>
+
       <motion.div
         className={`brand-overlay${menuOpen && isMobileMenu ? ' is-menu-open' : ''}${isContactVisible ? ' is-contact-visible' : ''}`}
         style={{ y: heroLogoY, scale: heroLogoScale }}
@@ -1196,6 +1304,16 @@ function App() {
           alt="TECHNALUM — Esquadrias e Fachadas"
         />
       </motion.div>
+
+      <a
+        className="whatsapp-float"
+        href="https://www.whatsapp.com/"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Conversar pelo WhatsApp"
+      >
+        <img src="/whatsapp.png" alt="" />
+      </a>
     </>
   )
 }
