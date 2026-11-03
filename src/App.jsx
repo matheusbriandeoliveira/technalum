@@ -81,6 +81,16 @@ const solutionCards = [
       'Desenvolvidas conforme as dimensões e características da entrada, com atenção ao sistema de abertura, estabilidade e acabamento.',
   },
 ]
+const partnerBrands = [
+  { name: 'Roto Fermax', image: '/marcas/roto-logo.png' },
+  { name: 'Fise', image: '/marcas/fise-logo.png' },
+  { name: 'Decamp Alumínio', image: '/marcas/decamp-logo.png' },
+  { name: 'Day Brasil', image: '/marcas/dayBrasil-logo.png' },
+  { name: 'Cyberglass', image: '/marcas/cyberglass-logo.png' },
+]
+const partnerBrandSlots = Array.from({ length: partnerBrands.length * 4 }, (_, index) =>
+  partnerBrands[index % partnerBrands.length],
+)
 const solutions = [
   'ESQUADRIAS DE ALUMÍNIO',
   'PORTAS E JANELAS',
@@ -112,6 +122,127 @@ const companyHighlights = [
   },
 ]
 
+function PartnerBrandCarousel({ shouldReduceMotion }) {
+  const stageRef = useRef(null)
+  const cardRefs = useRef([])
+  const animationRef = useRef({
+    offset: 0,
+    velocity: 0,
+    isPaused: false,
+    isDragging: false,
+    pointerX: 0,
+    dragOffset: 0,
+  })
+
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage) {
+      return undefined
+    }
+
+    let frameId
+    let previousTime = 0
+
+    const animate = (time) => {
+      const state = animationRef.current
+      const elapsed = previousTime ? Math.min(time - previousTime, 32) : 0
+      previousTime = time
+
+      const stageWidth = stage.clientWidth
+      const cardWidth = cardRefs.current[0]?.offsetWidth || 200
+      const gap = stageWidth <= 600 ? 18 : 32
+      const spacing = cardWidth + gap
+      const period = spacing * partnerBrandSlots.length
+      const targetVelocity =
+        shouldReduceMotion || state.isPaused || state.isDragging ? 0 : 0.018
+      const easing = 1 - Math.exp(-elapsed / 220)
+      state.velocity += (targetVelocity - state.velocity) * easing
+      state.offset =
+        ((state.offset + elapsed * state.velocity) % period + period) % period
+      const radius = Math.max(stageWidth * 0.5, cardWidth * 2.8)
+      const maxAngle = (78 * Math.PI) / 180
+      const maxX = radius * Math.sin(maxAngle)
+
+      stage.style.perspective = `${radius * 2.4}px`
+
+      cardRefs.current.forEach((card, index) => {
+        if (!card) {
+          return
+        }
+
+        const unwrappedX = index * spacing - state.offset
+        const x = ((unwrappedX + period / 2) % period + period) % period - period / 2
+        const visible = Math.abs(x) <= maxX
+        const angle = Math.asin(Math.max(-1, Math.min(1, x / radius)))
+        const depth = radius * (1 - Math.cos(angle))
+
+        card.style.visibility = visible ? 'visible' : 'hidden'
+        card.style.zIndex = `${Math.round(Math.cos(angle) * 100)}`
+        card.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, ${depth}px) rotateY(${-angle}rad)`
+      })
+
+      frameId = requestAnimationFrame(animate)
+    }
+
+    frameId = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(frameId)
+  }, [shouldReduceMotion])
+
+  const startDrag = (event) => {
+    if (event.button !== 0 && event.pointerType === 'mouse') {
+      return
+    }
+
+    const state = animationRef.current
+    state.isDragging = true
+    state.pointerX = event.clientX
+    state.dragOffset = state.offset
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  const moveDrag = (event) => {
+    const state = animationRef.current
+    if (state.isDragging) {
+      state.offset = state.dragOffset - (event.clientX - state.pointerX)
+    }
+  }
+
+  const endDrag = () => {
+    animationRef.current.isDragging = false
+    animationRef.current.velocity = 0
+  }
+
+  return (
+    <div
+      className="partners-stage"
+      ref={stageRef}
+      aria-hidden="true"
+      onMouseEnter={() => {
+        animationRef.current.isPaused = true
+      }}
+      onMouseLeave={() => {
+        animationRef.current.isPaused = false
+      }}
+      onPointerDown={startDrag}
+      onPointerMove={moveDrag}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+    >
+      {partnerBrandSlots.map((brand, index) => (
+        <div
+          className="partner-brand-card"
+          key={`${brand.name}-${index}`}
+          ref={(element) => {
+            cardRefs.current[index] = element
+          }}
+        >
+          <img src={brand.image} alt="" draggable="false" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function useOutsideClick(ref, callback) {
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -132,11 +263,20 @@ function useOutsideClick(ref, callback) {
   }, [callback, ref])
 }
 
-function SolutionsSection({ shouldReduceMotion, isReady }) {
+function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
   const carouselRef = useRef(null)
   const dragStateRef = useRef(null)
   const dialogRef = useRef(null)
   const closeButtonRef = useRef(null)
+  const { scrollYProgress: contactScrollProgress } = useScroll({
+    target: contactSectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const contactImageY = useTransform(
+    contactScrollProgress,
+    [0, 1],
+    shouldReduceMotion ? [0, 0] : [-34, 34],
+  )
   const [activeCard, setActiveCard] = useState(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -375,6 +515,66 @@ function SolutionsSection({ shouldReduceMotion, isReady }) {
         </div>
       </section>
 
+      <section
+        className="partners-section"
+        aria-labelledby="partners-title"
+        inert={!isReady}
+        aria-hidden={!isReady}
+      >
+        <div className="partners-section-content">
+          <div className="partners-section-heading">
+            <h2 id="partners-title">A qualidade começa nas escolhas.</h2>
+          </div>
+          <PartnerBrandCarousel shouldReduceMotion={shouldReduceMotion} />
+          <p className="partners-description">
+            Trabalhamos com marcas especializadas que fazem parte das soluções
+            que entregamos.
+          </p>
+          <ul className="visually-hidden" aria-label="Marcas parceiras">
+            {partnerBrands.map((brand) => (
+              <li key={brand.name}>{brand.name}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section
+        className="contact-section"
+        id="contato"
+        ref={contactSectionRef}
+        aria-labelledby="contact-title"
+        inert={!isReady}
+        aria-hidden={!isReady}
+      >
+        <div className="contact-visual" aria-hidden="true">
+          <motion.img
+            className="contact-background"
+            src="/img-1.png"
+            alt=""
+            loading="lazy"
+            style={{ y: contactImageY }}
+          />
+        </div>
+        <div className="contact-content">
+          <h2 id="contact-title">Seu projeto começa por aqui.</h2>
+          <p>
+            Uma solução específica, uma nova possibilidade ou orientação para
+            escolher melhor. Nossa equipe está aqui para ajudar.
+          </p>
+          <a
+            className="contact-cta"
+            href="https://wa.me/?text=Ol%C3%A1%2C%20gostaria%20de%20conversar%20sobre%20meu%20projeto."
+            target="_blank"
+            rel="noreferrer"
+          >
+            Conversar sobre meu projeto
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14m-7-7 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {createPortal(
         <AnimatePresence>
           {activeCard && (
@@ -495,6 +695,8 @@ function App() {
   const heroVideoRef = useRef(null)
   const scrollOverlapRef = useRef(null)
   const aboutSectionRef = useRef(null)
+  const contactSectionRef = useRef(null)
+  const isContactVisible = useInView(contactSectionRef)
   const shouldReduceMotion = useReducedMotion()
   const animationTransition = shouldReduceMotion ? { duration: 0 } : spring
   const { scrollYProgress } = useScroll({
@@ -979,10 +1181,11 @@ function App() {
       <SolutionsSection
         shouldReduceMotion={shouldReduceMotion}
         isReady={loaderState === 'hidden'}
+        contactSectionRef={contactSectionRef}
       />
 
       <motion.div
-        className={`brand-overlay${menuOpen && isMobileMenu ? ' is-menu-open' : ''}`}
+        className={`brand-overlay${menuOpen && isMobileMenu ? ' is-menu-open' : ''}${isContactVisible ? ' is-contact-visible' : ''}`}
         style={{ y: heroLogoY, scale: heroLogoScale }}
         inert={loaderState !== 'hidden'}
         aria-hidden={loaderState !== 'hidden'}
