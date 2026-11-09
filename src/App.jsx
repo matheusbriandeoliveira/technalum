@@ -1012,7 +1012,7 @@ function App() {
           <motion.video
             ref={heroVideoRef}
             className="hero-video"
-            src="/vd2background.mp4"
+            src="/vd2background.mp4?v=20261109-1555"
             poster="/bgNoite.png"
             style={{ y: heroParallaxY, scale: heroParallaxScale }}
             autoPlay
