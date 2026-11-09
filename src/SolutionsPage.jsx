@@ -270,7 +270,7 @@ function CatalogFooter() {
             </a>
             <a
               className="footer-social-link"
-              href="https://www.instagram.com/"
+              href="https://www.instagram.com/technalum/"
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram"
@@ -426,7 +426,7 @@ export default function SolutionsPage() {
           </a>
           <a
             className="social-link"
-            href="https://www.instagram.com/"
+            href="https://www.instagram.com/technalum/"
             target="_blank"
             rel="noreferrer"
             aria-label="Instagram"

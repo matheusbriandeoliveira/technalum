@@ -1069,7 +1069,7 @@ function App() {
           </motion.a>
           <motion.a
             className="social-link"
-            href="https://www.instagram.com/"
+            href="https://www.instagram.com/technalum/"
             target="_blank"
             rel="noreferrer"
             aria-label="Instagram"
@@ -1272,7 +1272,7 @@ function App() {
               </a>
               <a
                 className="footer-social-link"
-                href="https://www.instagram.com/"
+                href="https://www.instagram.com/technalum/"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
