@@ -4,6 +4,149 @@
   color: #202020;
 }
 
+.catalog-page .site-header {
+  position: fixed;
+  z-index: 20;
+  inset: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 60px;
+  padding: 0 9%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.catalog-page .solution-header-nav {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  order: 1;
+  height: 100%;
+  gap: clamp(18px, 3vw, 42px);
+  background: transparent;
+}
+
+.catalog-page .brand-header-logo {
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  order: 2;
+  width: clamp(120px, 14vw, 180px);
+  text-decoration: none;
+}
+
+.catalog-page .brand-header-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.catalog-page .social-links {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  order: 3;
+  height: 100%;
+  gap: 26px;
+}
+
+.catalog-page .menu-toggle {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .catalog-page .site-header {
+    grid-template-columns: 1fr auto 1fr;
+    padding: 0 5%;
+  }
+
+  .catalog-page .solution-header-nav {
+    position: fixed;
+    z-index: 5;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    height: 100vh;
+    height: 100svh;
+    padding: 60px 5% 0;
+    background: #061326;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 180ms ease, visibility 180ms ease;
+  }
+
+  .catalog-page .solution-header-nav.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .catalog-page .nav-link {
+    min-height: 64px;
+    font-size: 28px;
+  }
+
+  .catalog-page .menu-toggle {
+    position: absolute;
+    z-index: 6;
+    top: 0;
+    left: 5%;
+    display: flex;
+    width: 40px;
+    height: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 5px;
+    padding: 0 8px;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+  }
+
+  .catalog-page .menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 180ms ease, opacity 180ms ease;
+  }
+
+  .catalog-page .menu-toggle.is-open span:first-child {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+
+  .catalog-page .menu-toggle.is-open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .catalog-page .menu-toggle.is-open span:last-child {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  .catalog-page .brand-header-logo {
+    width: clamp(120px, 26vw, 150px);
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .catalog-page .social-links {
+    display: none;
+  }
+}
+
 .catalog-header {
   position: fixed;
   z-index: 20;
@@ -66,6 +209,9 @@
 }
 
 .catalog-intro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   min-height: min(660px, 78vh);
   min-height: min(660px, 78svh);
@@ -74,10 +220,38 @@
   justify-content: center;
   padding: 142px 24px 96px;
   background:
-    radial-gradient(ellipse at 50% 110%, rgba(81, 168, 177, 0.15), transparent 55%),
+    radial-gradient(ellipse at 50% 110%, rgba(81, 168, 177, 0.2), transparent 55%),
     #061326;
   color: #fff;
   text-align: center;
+}
+
+.catalog-intro::before {
+  position: absolute;
+  z-index: -1;
+  inset: -35%;
+  background: linear-gradient(
+    115deg,
+    #061326 18%,
+    #0b1c34 36%,
+    #16404c 52%,
+    #0b1c34 68%,
+    #061326 84%
+  );
+  background-size: 200% 100%;
+  content: '';
+  animation: catalog-intro-gradient 10s ease-in-out infinite alternate;
+  will-change: background-position;
+}
+
+@keyframes catalog-intro-gradient {
+  from {
+    background-position: 0% 50%;
+  }
+
+  to {
+    background-position: 100% 50%;
+  }
 }
 
 .catalog-intro-eyebrow {
@@ -308,7 +482,7 @@
 
 .catalog-gallery-thumbnails {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-top: 12px;
 }
@@ -507,6 +681,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .catalog-intro::before {
+    animation: none;
+  }
+
   .catalog-page *,
   .catalog-page *::before,
   .catalog-page *::after {

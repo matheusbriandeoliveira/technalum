@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import ScrollReveal from './ScrollReveal.jsx'
+import './App.css'
 import './SolutionsPage.css'
 
 const solutionCatalog = [
@@ -9,55 +10,81 @@ const solutionCatalog = [
     title: 'Esquadrias de Alumínio',
     description:
       'Esquadrias desenvolvidas para integrar ambientes, valorizar a arquitetura e oferecer funcionalidade, durabilidade e acabamentos adequados às necessidades de cada projeto.',
-    image: '/carrossel/esquadriasdealuminio.png',
+    galleryImages: [
+      '/solucoes/esquadrias/front.png',
+      '/solucoes/esquadrias/close.png',
+      '/solucoes/esquadrias/closeEsquadria.png',
+      '/solucoes/esquadrias/lado.png',
+    ],
   },
   {
     id: 'guarda-corpos',
     title: 'Guarda-corpos',
     description:
       'Soluções em guarda-corpos de vidro e alumínio que proporcionam proteção, transparência e integração visual em sacadas, escadas, varandas e outros ambientes.',
-    image: '/carrossel/guardaCorpos.png',
+    galleryImages: [
+      '/solucoes/guardaCorpos/front.png',
+      '/solucoes/guardaCorpos/closeUp.png',
+      '/solucoes/guardaCorpos/cima.png',
+      '/solucoes/guardaCorpos/baixo.png',
+    ],
   },
   {
     id: 'caixilhos',
     title: 'Caixilhos',
     description:
       'Caixilhos de alumínio planejados para diferentes configurações de portas e janelas, combinando resistência, funcionalidade e integração com a arquitetura.',
-    image: '/carrossel/caixilios.png',
+    galleryImages: [
+      '/solucoes/caixilhos/front.png',
+      '/solucoes/caixilhos/closeUp.png',
+      '/solucoes/caixilhos/lado.png',
+      '/solucoes/caixilhos/baIxo.png',
+    ],
   },
   {
     id: 'structural-glazing',
     title: 'Structural Glazing',
     description:
       'Sistema de fachadas envidraçadas que valoriza a continuidade visual do vidro, criando superfícies modernas e elegantes para projetos arquitetônicos.',
-    image: '/carrossel/glazing.png',
+    galleryImages: [
+      '/solucoes/glazing/close.png',
+      '/solucoes/glazing/closeUp.png',
+      '/solucoes/glazing/cima.png',
+      '/solucoes/glazing/lado.png',
+    ],
   },
   {
     id: 'pergolados-com-vidro',
     title: 'Pergolados com Vidro',
     description:
       'Estruturas com cobertura de vidro que permitem aproveitar a iluminação natural e criar ambientes protegidos, valorizando áreas externas e espaços de convivência.',
-    image: '/carrossel/pergoladocomvidro.png',
+    galleryImages: [
+      '/solucoes/pergolados/close.png',
+      '/solucoes/pergolados/close%20up.png',
+      '/solucoes/pergolados/esquerda.png',
+      '/solucoes/pergolados/lado.png',
+    ],
   },
   {
     id: 'portas-pivotantes',
     title: 'Portas Pivotantes',
     description:
       'Portas que combinam imponência, design e funcionalidade, oferecendo uma solução arquitetônica marcante para entradas residenciais e comerciais.',
-    image: '/carrossel/portaspivotantes.png',
+    galleryImages: [
+      '/solucoes/pivotante/front.png',
+      '/solucoes/pivotante/closeUp.png',
+      '/solucoes/pivotante/cima.png',
+      '/solucoes/pivotante/lado.png',
+    ],
   },
 ]
 
 function createGalleryImages(solution) {
-  return [
-    { src: solution.image, alt: solution.title, placeholder: false },
-    ...Array.from({ length: 4 }, (_, index) => ({
-      src: null,
-      alt: '',
-      placeholder: true,
-      label: `Foto ${index + 2} de ${solution.title} — imagem de projeto em breve`,
-    })),
-  ]
+  return solution.galleryImages.map((src, index) => ({
+    src,
+    alt: `${solution.title} — fotografia ${index + 1}`,
+    placeholder: false,
+  }))
 }
 
 function SolutionGallery({ solution, index, prefersReducedMotion }) {
@@ -276,6 +303,53 @@ function CatalogFooter() {
 
 export default function SolutionsPage() {
   const prefersReducedMotion = useReducedMotion()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [isMobileMenu, setIsMobileMenu] = useState(() =>
+    window.matchMedia('(max-width: 600px)').matches,
+  )
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 600px)')
+    const updateMenuMode = () => {
+      setIsMobileMenu(mediaQuery.matches)
+      if (!mediaQuery.matches) {
+        setMenuOpen(false)
+      }
+    }
+
+    updateMenuMode()
+    mediaQuery.addEventListener('change', updateMenuMode)
+
+    return () => mediaQuery.removeEventListener('change', updateMenuMode)
+  }, [])
+
+  useEffect(() => {
+    if (!isMobileMenu || !menuOpen) {
+      return undefined
+    }
+
+    const bodyOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = bodyOverflow
+    }
+  }, [isMobileMenu, menuOpen])
+
+  useEffect(() => {
+    if (!isMobileMenu || !menuOpen) {
+      return undefined
+    }
+
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [isMobileMenu, menuOpen])
 
   useEffect(() => {
     document.title = 'Soluções | TECHNALUM — Esquadrias e Fachadas'
@@ -293,28 +367,90 @@ export default function SolutionsPage() {
 
   return (
     <div className="catalog-page">
-      <header className="catalog-header">
+      <header className="site-header" aria-label="Navegação principal">
+        <nav
+          className={`primary-nav solution-header-nav${menuOpen ? ' is-open' : ''}`}
+          id="catalog-navigation"
+          aria-label="Navegação principal"
+          aria-hidden={isMobileMenu && !menuOpen}
+          inert={isMobileMenu && !menuOpen ? true : undefined}
+        >
+          <a
+            className="nav-link"
+            href="/#home"
+            onClick={() => setMenuOpen(false)}
+          >
+            Home
+          </a>
+          <a
+            className="nav-link"
+            href="/#sobre"
+            onClick={() => setMenuOpen(false)}
+          >
+            Sobre
+          </a>
+          <a
+            className="nav-link is-active"
+            href="/solucoes.html"
+            aria-current="page"
+            onClick={() => setMenuOpen(false)}
+          >
+            Soluções
+          </a>
+          <a
+            className="nav-link"
+            href="#contato"
+            onClick={() => setMenuOpen(false)}
+          >
+            Contato
+          </a>
+        </nav>
+
         <a
-          className="catalog-header-brand"
+          className="brand-header-logo"
           href="/#home"
           aria-label="TECHNALUM — página inicial"
         >
           <img src="/logoSemFundo.png" alt="" />
         </a>
-        <nav className="catalog-navigation" aria-label="Navegação principal">
-          <a href="/#home">Home</a>
-          <a href="/solucoes.html" aria-current="page">
-            Soluções
+
+        <div className="social-links" aria-label="Redes sociais">
+          <a
+            className="social-link"
+            href="https://www.whatsapp.com/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="WhatsApp"
+          >
+            <img className="social-icon" src="/whatsapp.png" alt="" />
           </a>
-          <a href="#contato">Contato</a>
-        </nav>
+          <a
+            className="social-link"
+            href="https://www.instagram.com/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Instagram"
+          >
+            <img className="social-icon" src="/instagram.png" alt="" />
+          </a>
+        </div>
+
+        <button
+          className={`menu-toggle${menuOpen ? ' is-open' : ''}`}
+          type="button"
+          aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={menuOpen}
+          aria-controls="catalog-navigation"
+          onClick={() => setMenuOpen((isOpen) => !isOpen)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </header>
 
       <main>
         <section className="catalog-intro" aria-labelledby="catalog-title">
-          <ScrollReveal as="p" className="catalog-intro-eyebrow">
-            TECHNALUM · ESQUADRIAS E FACHADAS
-          </ScrollReveal>
           <ScrollReveal as="h1" id="catalog-title" delay={0.08}>
             Soluções
           </ScrollReveal>

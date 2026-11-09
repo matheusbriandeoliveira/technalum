@@ -720,12 +720,12 @@ function App() {
   const [isMobileMenu, setIsMobileMenu] = useState(() =>
     window.matchMedia('(max-width: 600px)').matches,
   )
+  const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth)
   const [loaderState, setLoaderState] = useState('loading')
   const heroVideoRef = useRef(null)
   const scrollOverlapRef = useRef(null)
   const aboutSectionRef = useRef(null)
   const contactSectionRef = useRef(null)
-  const isContactVisible = useInView(contactSectionRef)
   const shouldReduceMotion = useReducedMotion()
   const animationTransition = shouldReduceMotion ? { duration: 0 } : spring
   const { scrollYProgress } = useScroll({
@@ -746,13 +746,21 @@ function App() {
     damping: 26,
     mass: 0.65,
   })
-  const heroLogoY = useTransform(smoothLogoProgress, (progress) =>
-    shouldReduceMotion ? 0 : progress * (30 - window.innerHeight / 2),
-  )
-  const heroLogoScale = useTransform(
+  const heroLogoWidth =
+    viewportWidth <= 768
+      ? Math.min(500, viewportWidth * 0.82)
+      : Math.min(500, viewportWidth * 0.8)
+  const headerLogoWidth =
+    viewportWidth <= 600
+      ? Math.min(150, Math.max(120, viewportWidth * 0.26))
+      : Math.min(180, Math.max(120, viewportWidth * 0.14))
+  const heroLogoWidthProgress = useTransform(
     smoothLogoProgress,
     [0, 1],
-    [1, shouldReduceMotion ? 1 : 0.32],
+    [heroLogoWidth, headerLogoWidth],
+  )
+  const heroLogoY = useTransform(smoothLogoProgress, (progress) =>
+    shouldReduceMotion ? 0 : progress * (30 - window.innerHeight / 2),
   )
   const heroParallaxY = useTransform(
     scrollYProgress,
@@ -812,6 +820,12 @@ function App() {
     mediaQuery.addEventListener('change', updateMenuMode)
 
     return () => mediaQuery.removeEventListener('change', updateMenuMode)
+  }, [])
+
+  useEffect(() => {
+    const updateViewportWidth = () => setViewportWidth(window.innerWidth)
+    window.addEventListener('resize', updateViewportWidth)
+    return () => window.removeEventListener('resize', updateViewportWidth)
   }, [])
 
   useEffect(() => {
@@ -889,7 +903,7 @@ function App() {
 
       const handleError = () => {
         cleanup()
-        reject(new Error('Não foi possível carregar /vdHero-h264.mp4'))
+        reject(new Error('Não foi possível carregar /vd2background.mp4'))
       }
 
       if (video.error) {
@@ -998,7 +1012,7 @@ function App() {
           <motion.video
             ref={heroVideoRef}
             className="hero-video"
-            src="/vdHero-h264.mp4"
+            src="/vd2background.mp4"
             poster="/bgNoite.png"
             style={{ y: heroParallaxY, scale: heroParallaxScale }}
             autoPlay
@@ -1288,16 +1302,23 @@ function App() {
       </footer>
 
       <motion.div
-        className={`brand-overlay${menuOpen && isMobileMenu ? ' is-menu-open' : ''}${isContactVisible ? ' is-contact-visible' : ''}`}
-        style={{ y: heroLogoY, scale: heroLogoScale }}
+        className={`brand-overlay${menuOpen && isMobileMenu ? ' is-menu-open' : ''}`}
+        style={{ y: heroLogoY }}
         inert={loaderState !== 'hidden'}
         aria-hidden={loaderState !== 'hidden'}
       >
-        <img
-          className="brand-logo"
-          src="/logoSemFundo.png"
-          alt="TECHNALUM — Esquadrias e Fachadas"
-        />
+        <a
+          className="brand-logo-link"
+          href="/#home"
+          aria-label="TECHNALUM — página inicial"
+        >
+          <motion.img
+            className="brand-logo"
+            src="/logoSemFundo.png"
+            alt=""
+            style={{ width: heroLogoWidthProgress }}
+          />
+        </a>
       </motion.div>
 
       <a

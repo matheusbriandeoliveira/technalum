@@ -1305,17 +1305,24 @@
   display: grid;
   place-items: center;
   pointer-events: none;
+  opacity: 1;
   transition: opacity 240ms ease;
-}
-
-.brand-overlay.is-contact-visible {
-  opacity: 0;
 }
 
 .brand-logo {
   display: block;
   width: min(500px, 80vw);
   height: auto;
+}
+
+.brand-logo-link {
+  display: block;
+  pointer-events: none;
+}
+
+.brand-logo-link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 6px;
 }
 
 @media (max-width: 768px) {
@@ -1344,6 +1351,10 @@
 @media (max-width: 600px) {
   .brand-overlay.is-menu-open {
     z-index: 4;
+  }
+
+  .brand-logo-link {
+    pointer-events: auto;
   }
 
   .site-header {
@@ -1404,10 +1415,7 @@
   }
 
   .social-links {
-    position: static;
-    height: 100%;
-    margin-left: auto;
-    pointer-events: auto;
+    display: none;
   }
 }
 
