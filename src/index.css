@@ -44,8 +44,41 @@ a:focus-visible {
   outline-offset: 4px;
 }
 
+.scroll-reveal {
+  transition:
+    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--scroll-reveal-delay, 0s),
+    filter 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--scroll-reveal-delay, 0s),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--scroll-reveal-delay, 0s);
+}
+
+.scroll-reveal-pending {
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(20px);
+}
+
+.scroll-reveal-visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .scroll-reveal-pending {
+    transform: translateY(12px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .scroll-reveal-pending,
+  .scroll-reveal-visible {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
   }
 }

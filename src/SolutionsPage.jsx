@@ -93,7 +93,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
   const selectedImage = images[activeImage]
   const imageMotion = prefersReducedMotion
     ? { duration: 0 }
-    : { duration: 0.35, ease: 'easeOut' }
+    : { duration: 0.18, ease: 'easeOut' }
 
   const showImage = (nextIndex) => {
     setActiveImage((nextIndex + images.length) % images.length)
@@ -123,41 +123,46 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
 
       <div className="catalog-gallery">
         <div className="catalog-gallery-main" aria-live="polite">
-          <AnimatePresence mode="wait" initial={false}>
-            {selectedImage.placeholder ? (
-              <motion.div
-                className="catalog-gallery-placeholder"
-                key={`${solution.id}-${activeImage}`}
-                role="img"
-                aria-label={selectedImage.label}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={imageMotion}
-              >
-                <span className="catalog-placeholder-mark" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                </span>
-                <span>{selectedImage.label}</span>
-              </motion.div>
-            ) : (
-              <motion.img
-                className="catalog-gallery-image"
-                key={`${solution.id}-${activeImage}`}
-                src={selectedImage.src}
-                alt={`${solution.title} — fotografia ${activeImage + 1}`}
-                loading="lazy"
-                decoding="async"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={imageMotion}
-                draggable="false"
-              />
-            )}
-          </AnimatePresence>
+          <ScrollReveal
+            className="catalog-gallery-visual-reveal"
+            amount={0.18}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {selectedImage.placeholder ? (
+                <motion.div
+                  className="catalog-gallery-placeholder"
+                  key={`${solution.id}-${activeImage}`}
+                  role="img"
+                  aria-label={selectedImage.label}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={imageMotion}
+                >
+                  <span className="catalog-placeholder-mark" aria-hidden="true">
+                    <span />
+                    <span />
+                    <span />
+                  </span>
+                  <span>{selectedImage.label}</span>
+                </motion.div>
+              ) : (
+                <motion.img
+                  className="catalog-gallery-image"
+                  key={`${solution.id}-${activeImage}`}
+                  src={selectedImage.src}
+                  alt={`${solution.title} — fotografia ${activeImage + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={imageMotion}
+                  draggable="false"
+                />
+              )}
+            </AnimatePresence>
+          </ScrollReveal>
 
           <button
             className="catalog-gallery-arrow is-previous"
@@ -209,12 +214,19 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                   <span />
                 </span>
               ) : (
-                <img
-                  src={image.src}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                <ScrollReveal
+                  as="span"
+                  className="catalog-thumbnail-visual"
+                  amount={0.18}
+                  delay={imageIndex * 0.05}
+                >
+                  <img
+                    src={image.src}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </ScrollReveal>
               )}
               {image.placeholder && (
                 <span className="catalog-thumbnail-label">Em breve</span>
@@ -246,17 +258,55 @@ function CatalogFooter() {
           <ScrollReveal as="h2" className="footer-section-title" delay={0.12}>
             Informações legais
           </ScrollReveal>
-          <a href="/politica-de-privacidade.html">Política de Privacidade</a>
-          <a href="/termos-de-uso.html">Termos de Uso</a>
-          <a href="/politica-de-cookies.html">Política de Cookies</a>
+          <a href="/politica-de-privacidade.html">
+            <ScrollReveal
+              as="span"
+              className="catalog-footer-reveal"
+              delay={0.08}
+            >
+              Política de Privacidade
+            </ScrollReveal>
+          </a>
+          <a href="/termos-de-uso.html">
+            <ScrollReveal
+              as="span"
+              className="catalog-footer-reveal"
+              delay={0.16}
+            >
+              Termos de Uso
+            </ScrollReveal>
+          </a>
+          <a href="/politica-de-cookies.html">
+            <ScrollReveal
+              as="span"
+              className="catalog-footer-reveal"
+              delay={0.24}
+            >
+              Política de Cookies
+            </ScrollReveal>
+          </a>
         </nav>
         <div className="footer-contact">
           <ScrollReveal as="h2" className="footer-section-title" delay={0.16}>
             Contato
           </ScrollReveal>
-          <a href="tel:+5514997732211">(14) 99773-2211</a>
+          <a href="tel:+5514997732211">
+            <ScrollReveal
+              as="span"
+              className="catalog-footer-reveal"
+              delay={0.08}
+            >
+              (14) 99773-2211
+            </ScrollReveal>
+          </a>
           <a href="mailto:contato2@technalum.com.br">
-            contato2@technalum.com.br
+            <ScrollReveal
+              as="span"
+              className="catalog-footer-reveal"
+              delay={0.16}
+            >
+              contato2@technalum.com.br
+            </ScrollReveal>
           </a>
         </div>
         <div className="footer-social-group">
@@ -300,7 +350,9 @@ function CatalogFooter() {
             rel="noreferrer"
             aria-label="Fale com a Venovra pelo WhatsApp"
           >
-            Desenvolvido por <span>Venovra</span>
+            <ScrollReveal as="span" className="catalog-footer-reveal">
+              Desenvolvido por <span>Venovra</span>
+            </ScrollReveal>
           </a>
         </div>
       </div>

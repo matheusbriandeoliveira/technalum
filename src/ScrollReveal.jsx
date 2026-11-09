@@ -1,47 +1,66 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { useLayoutEffect, useRef, useState } from 'react'
 
-const revealElements = {
-  div: motion.div,
-  h1: motion.h1,
-  h2: motion.h2,
-  h3: motion.h3,
-  li: motion.li,
-  p: motion.p,
-  span: motion.span,
-}
+const revealElements = ['div', 'h1', 'h2', 'h3', 'li', 'p', 'span']
 
 export default function ScrollReveal({
   as = 'div',
   children,
   delay = 0,
   amount = 0.18,
+  className = '',
+  style,
   ...props
 }) {
-  const shouldReduceMotion = useReducedMotion()
-  const Element = revealElements[as] || motion.div
-  const isMobile =
-    typeof window !== 'undefined' &&
-    window.matchMedia?.('(max-width: 600px)').matches
+  const elementRef = useRef(null)
+  const [isVisible, setIsVisible] = useState(
+    () =>
+      typeof window !== 'undefined' && !('IntersectionObserver' in window),
+  )
+  const Element = revealElements.includes(as) ? as : 'div'
+
+  useLayoutEffect(() => {
+    const element = elementRef.current
+    if (!element) {
+      return undefined
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: Math.max(0, Math.min(1, amount)) },
+    )
+
+    observer.observe(element)
+
+    return () => observer.disconnect()
+  }, [amount])
+
+  const revealClass = [
+    className,
+    'scroll-reveal',
+    !isVisible ? 'scroll-reveal-pending' : '',
+    isVisible ? 'scroll-reveal-visible' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <Element
       {...props}
-      initial={
-        shouldReduceMotion
-          ? false
-          : { opacity: 0, filter: 'blur(6px)', y: isMobile ? 12 : 20 }
-      }
-      whileInView={
-        shouldReduceMotion
-          ? undefined
-          : { opacity: 1, filter: 'blur(0px)', y: 0 }
-      }
-      viewport={{ once: true, amount }}
-      transition={
-        shouldReduceMotion
-          ? { duration: 0 }
-          : { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }
-      }
+      ref={elementRef}
+      className={revealClass}
+      style={{
+        ...style,
+        '--scroll-reveal-delay': `${delay}s`,
+      }}
     >
       {children}
     </Element>

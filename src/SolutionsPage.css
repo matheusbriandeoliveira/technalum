@@ -300,6 +300,10 @@
   font-size: 16px;
 }
 
+.catalog-footer-reveal {
+  display: inline-block;
+}
+
 .catalog-solutions {
   width: min(100%, 1600px);
   margin: 0 auto;
@@ -368,6 +372,11 @@
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.catalog-gallery-visual-reveal {
+  position: absolute;
+  inset: 0;
 }
 
 .catalog-gallery-image {
@@ -517,6 +526,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.catalog-thumbnail-visual {
+  position: absolute;
+  inset: 0;
+  display: block;
 }
 
 .catalog-thumbnail-placeholder {
