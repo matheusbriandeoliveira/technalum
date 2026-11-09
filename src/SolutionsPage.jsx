@@ -149,6 +149,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                 src={selectedImage.src}
                 alt={`${solution.title} — fotografia ${activeImage + 1}`}
                 loading="lazy"
+                decoding="async"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -179,7 +180,8 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
             </svg>
           </button>
           <span className="catalog-gallery-count" aria-hidden="true">
-            {String(activeImage + 1).padStart(2, '0')} / 05
+            {String(activeImage + 1).padStart(2, '0')} /{' '}
+            {String(images.length).padStart(2, '0')}
           </span>
         </div>
 
@@ -207,7 +209,12 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                   <span />
                 </span>
               ) : (
-                <img src={image.src} alt="" loading="lazy" />
+                <img
+                  src={image.src}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
               )}
               {image.placeholder && (
                 <span className="catalog-thumbnail-label">Em breve</span>

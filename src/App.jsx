@@ -346,7 +346,7 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
       resizeObserver.disconnect()
       window.removeEventListener('resize', updateScrollButtons)
     }
-  }, [])
+  }, [shouldReduceMotion])
 
   const scrollCarousel = (direction) => {
     const carousel = carouselRef.current
@@ -487,7 +487,12 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
                 }
                 aria-label={`Ver detalhes: ${card.title}`}
               >
-                <img src={card.image} alt="" loading="lazy" />
+                <img
+                  src={card.image}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
                 <span className="solution-card-shade" aria-hidden="true" />
                 <span className="solution-card-content">
                   <span className="solution-card-category">
@@ -627,6 +632,7 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
                     className="solution-dialog-image"
                     src={activeCard.image}
                     alt=""
+                    decoding="async"
                   />
                   <span
                     className="solution-dialog-image-shade"
@@ -727,6 +733,7 @@ function App() {
   const aboutSectionRef = useRef(null)
   const contactSectionRef = useRef(null)
   const shouldReduceMotion = useReducedMotion()
+  const isHeroVisible = useInView(heroVideoRef, { amount: 0.1 })
   const animationTransition = shouldReduceMotion ? { duration: 0 } : spring
   const { scrollYProgress } = useScroll({
     target: scrollOverlapRef,
@@ -778,7 +785,8 @@ function App() {
 
   useEffect(() => {
     const video = heroVideoRef.current
-    if (!video) {
+    if (!video || shouldReduceMotion || !isHeroVisible) {
+      video?.pause()
       return undefined
     }
 
@@ -797,15 +805,23 @@ function App() {
       })
     }
 
+    const syncPlayback = () => {
+      if (document.visibilityState !== 'visible') {
+        video.pause()
+      } else {
+        startPlayback()
+      }
+    }
+
     video.addEventListener('canplay', startPlayback)
-    document.addEventListener('visibilitychange', startPlayback)
+    document.addEventListener('visibilitychange', syncPlayback)
     startPlayback()
 
     return () => {
       video.removeEventListener('canplay', startPlayback)
-      document.removeEventListener('visibilitychange', startPlayback)
+      document.removeEventListener('visibilitychange', syncPlayback)
     }
-  }, [])
+  }, [isHeroVisible, shouldReduceMotion])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 600px)')
@@ -892,6 +908,11 @@ function App() {
         return
       }
 
+      if (shouldReduceMotion || !isHeroVisible) {
+        resolve()
+        return
+      }
+
       const cleanup = () => {
         video.removeEventListener('loadeddata', handleLoaded)
         video.removeEventListener('error', handleError)
@@ -947,7 +968,7 @@ function App() {
       isMounted = false
       removeVideoListeners()
     }
-  }, [shouldReduceMotion])
+  }, [isHeroVisible, shouldReduceMotion])
 
   return (
     <>
@@ -1015,12 +1036,14 @@ function App() {
             src="/vd2background.mp4?v=20261109-1555"
             poster="/bgNoite.png"
             style={{ y: heroParallaxY, scale: heroParallaxScale }}
-            autoPlay
+            autoPlay={!shouldReduceMotion && isHeroVisible}
             muted
             loop
             playsInline
             controls={false}
-            preload="auto"
+            preload={
+              shouldReduceMotion || !isHeroVisible ? 'none' : 'auto'
+            }
           />
         </div>
       </main>
