@@ -357,7 +357,7 @@
 }
 
 .catalog-gallery .scroll-reveal {
-  transition-duration: 450ms;
+  transition-duration: 1200ms;
 }
 
 .catalog-gallery-main {
@@ -365,7 +365,7 @@
   width: 100%;
   overflow: hidden;
   aspect-ratio: 1.95;
-  background: #e7e8e6;
+  background: transparent;
   isolation: isolate;
 }
 
@@ -506,7 +506,7 @@
   overflow: hidden;
   padding: 0;
   border: 1px solid transparent;
-  background: #e7e8e6;
+  background: transparent;
   aspect-ratio: 1.9;
   cursor: pointer;
   opacity: 0.64;
@@ -520,8 +520,43 @@
 }
 
 .catalog-gallery-thumbnail.is-active {
-  border-color: #51a8b1;
   opacity: 1;
+}
+
+.catalog-thumbnail-visual::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transition: border-color 180ms ease;
+}
+
+.catalog-gallery-thumbnail.is-active .catalog-thumbnail-visual::after {
+  border-color: #51a8b1;
+}
+
+.catalog-thumbnail-visual.scroll-reveal-visible::after {
+  animation: catalog-thumbnail-border 180ms ease
+    calc(var(--scroll-reveal-delay, 0s) + 1.2s) forwards;
+}
+
+@keyframes catalog-thumbnail-border {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-thumbnail-visual::after {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+.catalog-gallery-thumbnail:has(.scroll-reveal-pending) {
+  border-color: transparent;
 }
 
 .catalog-gallery-thumbnail img,

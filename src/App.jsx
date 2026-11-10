@@ -524,11 +524,11 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
                     ? undefined
                     : { opacity: 1, filter: 'blur(0px)', y: 0 }
                 }
-                viewport={{ once: true, amount: 0.05 }}
+                viewport={{ once: true, amount: 0.08, margin: '0px 0px -30% 0px' }}
                 transition={
                   shouldReduceMotion
                     ? { duration: 0 }
-                    : { ...spring, delay: index * 0.08 }
+                    : { duration: 1.1, ease: [0.25, 0.1, 0.25, 1], delay: index * 0.12 }
                 }
                 aria-label={`Ver detalhes: ${card.title}`}
               >
@@ -591,7 +591,9 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
               A qualidade começa nas escolhas.
             </ScrollReveal>
           </div>
-          <PartnerBrandCarousel shouldReduceMotion={shouldReduceMotion} />
+          <ScrollReveal delay={0.2} amount={0.12}>
+            <PartnerBrandCarousel shouldReduceMotion={shouldReduceMotion} />
+          </ScrollReveal>
           <ScrollReveal as="p" className="partners-description" delay={0.12}>
             Trabalhamos com marcas especializadas que fazem parte das soluções
             que entregamos.
@@ -1027,10 +1029,9 @@ function App() {
         </motion.div>
       )}
 
-      <div className="scroll-overlap" ref={scrollOverlapRef}>
+      <div className="scroll-overlap" id="home" ref={scrollOverlapRef}>
       <main
         className={`hero${menuOpen && isMobileMenu ? ' is-menu-open' : ''}`}
-        id="home"
         inert={loaderState !== 'hidden'}
         aria-hidden={loaderState !== 'hidden'}
       >

@@ -126,7 +126,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
           <ScrollReveal
             className="catalog-gallery-visual-reveal"
             amount={0.08}
-            delay={0.08}
+            delay={0.16}
           >
             <AnimatePresence initial={false}>
               {selectedImage.placeholder ? (
@@ -219,7 +219,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                   as="span"
                   className="catalog-thumbnail-visual"
                   amount={0.08}
-                  delay={0.08 + imageIndex * 0.04}
+                  delay={0.16 + imageIndex * 0.14}
                 >
                   <img
                     src={image.src}

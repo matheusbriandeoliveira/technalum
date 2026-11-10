@@ -46,9 +46,9 @@ a:focus-visible {
 
 .scroll-reveal {
   transition:
-    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--scroll-reveal-delay, 0s),
-    filter 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--scroll-reveal-delay, 0s),
-    transform 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--scroll-reveal-delay, 0s);
+    opacity 1100ms cubic-bezier(0.25, 0.1, 0.25, 1) var(--scroll-reveal-delay, 0s),
+    filter 1100ms cubic-bezier(0.25, 0.1, 0.25, 1) var(--scroll-reveal-delay, 0s),
+    transform 1100ms cubic-bezier(0.25, 0.1, 0.25, 1) var(--scroll-reveal-delay, 0s);
 }
 
 .scroll-reveal-pending {

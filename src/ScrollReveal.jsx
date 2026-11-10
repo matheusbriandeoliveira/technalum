@@ -28,6 +28,7 @@ export default function ScrollReveal({
       return undefined
     }
 
+    const isFooter = Boolean(element.closest('footer'))
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -35,7 +36,10 @@ export default function ScrollReveal({
           observer.disconnect()
         }
       },
-      { threshold: Math.max(0, Math.min(1, amount)) },
+      {
+        threshold: isFooter ? 0 : Math.max(0, Math.min(1, amount)),
+        rootMargin: isFooter ? '0px' : '0px 0px -30% 0px',
+      },
     )
 
     observer.observe(element)
