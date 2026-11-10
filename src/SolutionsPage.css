@@ -78,6 +78,7 @@
     gap: 0;
     height: 100vh;
     height: 100svh;
+    height: 100dvh;
     padding: 60px 5% 0;
     background: #061326;
     opacity: 0;
@@ -93,6 +94,8 @@
   }
 
   .catalog-page .nav-link {
+    flex: 0 0 64px;
+    height: 64px;
     min-height: 64px;
     font-size: 28px;
   }
@@ -137,6 +140,7 @@
   }
 
   .catalog-page .brand-header-logo {
+    pointer-events: auto;
     width: clamp(120px, 26vw, 150px);
     grid-column: 2;
     grid-row: 1;

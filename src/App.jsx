@@ -800,14 +800,10 @@ function App() {
     target: scrollOverlapRef,
     offset: ['start start', 'end start'],
   })
-  const { scrollYProgress: aboutScrollProgress } = useScroll({
-    target: aboutSectionRef,
-    offset: ['start end', 'start start'],
-  })
+  const { scrollY } = useScroll()
   const aboutLogoProgress = useTransform(
-    aboutScrollProgress,
-    [0, 0.65],
-    [0, 1],
+    scrollY,
+    (position) => Math.min(1, Math.max(0, position / (window.innerHeight * 0.65))),
   )
   const smoothLogoProgress = useSpring(aboutLogoProgress, {
     stiffness: isMobileMenu ? 240 : 280,
@@ -828,7 +824,7 @@ function App() {
     [heroLogoWidth, headerLogoWidth],
   )
   const heroLogoY = useTransform(smoothLogoProgress, (progress) =>
-    shouldReduceMotion ? 0 : progress * (30 - window.innerHeight / 2),
+    progress * (30 - window.innerHeight / 2),
   )
   const heroParallaxY = useTransform(
     scrollYProgress,
@@ -1053,7 +1049,7 @@ function App() {
           <motion.video
             ref={heroVideoRef}
             className="hero-video"
-            src="/vdbackgroundTech.mp4"
+            src="/vdbackgroundTech2.mp4"
             poster="/bgNoite.png"
             style={{ y: heroParallaxY, scale: heroParallaxScale }}
             autoPlay={!shouldReduceMotion && isHeroVisible}
@@ -1353,6 +1349,7 @@ function App() {
         <a
           className="brand-logo-link"
           href="/#home"
+          onClick={() => setMenuOpen(false)}
           aria-label="TECHNALUM — página inicial"
         >
           <motion.img
