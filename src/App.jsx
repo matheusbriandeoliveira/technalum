@@ -824,7 +824,7 @@ function App() {
     [heroLogoWidth, headerLogoWidth],
   )
   const heroLogoY = useTransform(smoothLogoProgress, (progress) =>
-    progress * (30 - window.innerHeight / 2),
+    (1 - Math.min(1, Math.max(0, progress))) * (window.innerHeight / 2 - 30),
   )
   const heroParallaxY = useTransform(
     scrollYProgress,
