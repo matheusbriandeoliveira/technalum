@@ -783,6 +783,13 @@ function ExperienceCounter({ shouldReduceMotion }) {
 }
 
 function App() {
+  const [activeNav, setActiveNav] = useState(() => window.location.hash.slice(1) || 'home')
+
+  useEffect(() => {
+    const update = () => setActiveNav(window.location.hash.slice(1) || 'home')
+    window.addEventListener('hashchange', update)
+    return () => window.removeEventListener('hashchange', update)
+  }, [])
   const [menuOpen, setMenuOpen] = useState(false)
   const [isMobileMenu, setIsMobileMenu] = useState(() =>
     window.matchMedia('(max-width: 600px)').matches,
@@ -1124,6 +1131,10 @@ function App() {
       <motion.nav
         className={`primary-nav${menuOpen ? ' is-open' : ''}`}
         id="primary-navigation"
+        onClick={(event) => {
+          const link = event.target.closest('a')
+          if (link) setActiveNav(link.hash.slice(1) || 'solucoes')
+        }}
         aria-label="Navegação principal"
         aria-hidden={
           loaderState !== 'hidden' || (isMobileMenu && !menuOpen)
@@ -1142,30 +1153,32 @@ function App() {
         transition={animationTransition}
       >
         <a
-          className="nav-link is-active"
+          className={`nav-link${activeNav === 'home' ? ' is-active' : ''}`}
           href="#home"
-          aria-current="page"
+          aria-current={activeNav === 'home' ? 'location' : undefined}
           onClick={() => setMenuOpen(false)}
         >
           Home
         </a>
         <a
-          className="nav-link"
+          className={`nav-link${activeNav === 'sobre' ? ' is-active' : ''}`}
           href="#sobre"
+          aria-current={activeNav === 'sobre' ? 'location' : undefined}
           onClick={() => setMenuOpen(false)}
         >
           Sobre
         </a>
         <a
-          className="nav-link"
+          className={`nav-link${activeNav === 'solucoes' ? ' is-active' : ''}`}
           href="/solucoes.html"
           onClick={() => setMenuOpen(false)}
         >
           Soluções
         </a>
         <a
-          className="nav-link"
+          className={`nav-link${activeNav === 'contato' ? ' is-active' : ''}`}
           href="#contato"
+          aria-current={activeNav === 'contato' ? 'location' : undefined}
           onClick={() => setMenuOpen(false)}
         >
           Contato

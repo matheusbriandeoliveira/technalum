@@ -363,6 +363,15 @@ function CatalogFooter() {
 }
 
 export default function SolutionsPage() {
+  const [activeNav, setActiveNav] = useState(() =>
+    window.location.hash === '#contato' ? 'contato' : 'solucoes',
+  )
+
+  useEffect(() => {
+    const update = () => setActiveNav(window.location.hash === '#contato' ? 'contato' : 'solucoes')
+    window.addEventListener('hashchange', update)
+    return () => window.removeEventListener('hashchange', update)
+  }, [])
   const prefersReducedMotion = useReducedMotion()
   const [menuOpen, setMenuOpen] = useState(false)
   const [isMobileMenu, setIsMobileMenu] = useState(() =>
@@ -432,6 +441,10 @@ export default function SolutionsPage() {
         <nav
           className={`primary-nav solution-header-nav${menuOpen ? ' is-open' : ''}`}
           id="catalog-navigation"
+          onClick={(event) => {
+            const link = event.target.closest('a')
+            if (link) setActiveNav(link.hash.slice(1) || 'solucoes')
+          }}
           aria-label="Navegação principal"
           aria-hidden={isMobileMenu && !menuOpen}
           inert={isMobileMenu && !menuOpen ? true : undefined}
@@ -451,16 +464,17 @@ export default function SolutionsPage() {
             Sobre
           </a>
           <a
-            className="nav-link is-active"
+            className={`nav-link${activeNav === 'solucoes' ? ' is-active' : ''}`}
             href="/solucoes.html"
-            aria-current="page"
+            aria-current={activeNav === 'solucoes' ? 'page' : undefined}
             onClick={() => setMenuOpen(false)}
           >
             Soluções
           </a>
           <a
-            className="nav-link"
+            className={`nav-link${activeNav === 'contato' ? ' is-active' : ''}`}
             href="#contato"
+            aria-current={activeNav === 'contato' ? 'location' : undefined}
             onClick={() => setMenuOpen(false)}
           >
             Contato
