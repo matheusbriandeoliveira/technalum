@@ -296,6 +296,16 @@ function PartnerBrandCarousel({ shouldReduceMotion }) {
 }
 
 function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
+  const [isMobileReveal, setIsMobileReveal] = useState(() =>
+    window.matchMedia('(max-width: 700px)').matches,
+  )
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 700px)')
+    const update = () => setIsMobileReveal(mediaQuery.matches)
+    mediaQuery.addEventListener('change', update)
+    return () => mediaQuery.removeEventListener('change', update)
+  }, [])
   const carouselRef = useRef(null)
   const dragStateRef = useRef(null)
   const dialogRef = useRef(null)
@@ -524,7 +534,11 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
                     ? undefined
                     : { opacity: 1, filter: 'blur(0px)', y: 0 }
                 }
-                viewport={{ once: true, amount: 0.08, margin: '0px 0px -30% 0px' }}
+                viewport={{
+                  once: true,
+                  amount: isMobileReveal ? 0 : 0.08,
+                  margin: isMobileReveal ? '0px' : '0px 0px -30% 0px',
+                }}
                 transition={
                   shouldReduceMotion
                     ? { duration: 0 }

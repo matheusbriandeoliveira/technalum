@@ -7,6 +7,7 @@ export default function ScrollReveal({
   children,
   delay = 0.1,
   amount = 0.18,
+  nearCenter = true,
   className = '',
   style,
   ...props
@@ -28,8 +29,13 @@ export default function ScrollReveal({
       return undefined
     }
 
+    const mediaQuery = window.matchMedia('(max-width: 700px)')
     const isFooter = Boolean(element.closest('footer'))
-    const observer = new IntersectionObserver(
+    let observer
+    const observe = () => {
+      observer?.disconnect()
+      const revealOnEntry = mediaQuery.matches || isFooter || !nearCenter
+      observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true)
@@ -37,15 +43,21 @@ export default function ScrollReveal({
         }
       },
       {
-        threshold: isFooter ? 0 : Math.max(0, Math.min(1, amount)),
-        rootMargin: isFooter ? '0px' : '0px 0px -30% 0px',
+        threshold: revealOnEntry ? 0 : Math.max(0, Math.min(1, amount)),
+        rootMargin: revealOnEntry ? '0px' : '0px 0px -30% 0px',
       },
     )
 
-    observer.observe(element)
+      observer.observe(element)
+    }
+    observe()
+    mediaQuery.addEventListener('change', observe)
 
-    return () => observer.disconnect()
-  }, [amount])
+    return () => {
+      observer.disconnect()
+      mediaQuery.removeEventListener('change', observe)
+    }
+  }, [amount, nearCenter])
 
   const revealClass = [
     className,

@@ -218,6 +218,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                 <ScrollReveal
                   as="span"
                   className="catalog-thumbnail-visual"
+                  nearCenter={false}
                   amount={0.08}
                   delay={0.16 + imageIndex * 0.14}
                 >
