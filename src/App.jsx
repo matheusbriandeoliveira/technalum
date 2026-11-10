@@ -537,7 +537,7 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
                 viewport={{
                   once: true,
                   amount: isMobileReveal ? 0 : 0.08,
-                  margin: isMobileReveal ? '0px' : '0px 0px -30% 0px',
+                  margin: isMobileReveal ? '0px' : '0px 0px -64px 0px',
                 }}
                 transition={
                   shouldReduceMotion

@@ -43,8 +43,8 @@ export default function ScrollReveal({
         }
       },
       {
-        threshold: revealOnEntry ? 0 : Math.max(0, Math.min(1, amount)),
-        rootMargin: revealOnEntry ? '0px' : '0px 0px -30% 0px',
+        threshold: revealOnEntry ? 0 : Math.max(0, Math.min(0.08, amount)),
+        rootMargin: revealOnEntry ? '0px' : '0px 0px -64px 0px',
       },
     )
 
