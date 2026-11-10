@@ -94,6 +94,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
   const imageMotion = prefersReducedMotion
     ? { duration: 0 }
     : { duration: 0.18, ease: 'easeOut' }
+  const revealDelay = 0.2
 
   const showImage = (nextIndex) => {
     setActiveImage((nextIndex + images.length) % images.length)
@@ -126,6 +127,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
           <ScrollReveal
             className="catalog-gallery-visual-reveal"
             amount={0.18}
+            delay={revealDelay}
           >
             <AnimatePresence mode="wait" initial={false}>
               {selectedImage.placeholder ? (
@@ -218,7 +220,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                   as="span"
                   className="catalog-thumbnail-visual"
                   amount={0.18}
-                  delay={imageIndex * 0.05}
+                  delay={revealDelay + imageIndex * 0.07}
                 >
                   <img
                     src={image.src}

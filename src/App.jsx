@@ -140,17 +140,25 @@ function PartnerBrandCarousel({ shouldReduceMotion }) {
     pointerX: 0,
     dragOffset: 0,
   })
+  const isInView = useInView(stageRef, { amount: 0.05 })
 
   useEffect(() => {
     const stage = stageRef.current
-    if (!stage) {
+    if (!stage || !isInView) {
       return undefined
     }
 
-    let frameId
+    let frameId = 0
     let previousTime = 0
+    let isPageVisible = document.visibilityState === 'visible'
+    let scheduleFrame
 
     const animate = (time) => {
+      frameId = 0
+      if (!isPageVisible) {
+        return
+      }
+
       const state = animationRef.current
       const elapsed = previousTime ? Math.min(time - previousTime, 32) : 0
       previousTime = time
@@ -188,12 +196,37 @@ function PartnerBrandCarousel({ shouldReduceMotion }) {
         card.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, ${depth}px) rotateY(${-angle}rad)`
       })
 
-      frameId = requestAnimationFrame(animate)
+      if (!shouldReduceMotion) {
+        scheduleFrame()
+      }
     }
 
-    frameId = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(frameId)
-  }, [shouldReduceMotion])
+    scheduleFrame = () => {
+      if (isPageVisible && !frameId) {
+        frameId = requestAnimationFrame(animate)
+      }
+    }
+
+    const handleVisibilityChange = () => {
+      isPageVisible = document.visibilityState === 'visible'
+      if (isPageVisible) {
+        scheduleFrame()
+      } else if (frameId) {
+        cancelAnimationFrame(frameId)
+        frameId = 0
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    scheduleFrame()
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      if (frameId) {
+        cancelAnimationFrame(frameId)
+      }
+    }
+  }, [isInView, shouldReduceMotion])
 
   const startDrag = (event) => {
     if (event.button !== 0 && event.pointerType === 'mouse') {
@@ -924,7 +957,7 @@ function App() {
 
       const handleError = () => {
         cleanup()
-        reject(new Error('Não foi possível carregar /vd2background.mp4'))
+        reject(new Error('Não foi possível carregar /vdbackgroundTech.mp4'))
       }
 
       if (video.error) {
@@ -1033,7 +1066,7 @@ function App() {
           <motion.video
             ref={heroVideoRef}
             className="hero-video"
-            src="/vd2background.mp4?v=20261109-1555"
+            src="/vdbackgroundTech.mp4"
             poster="/bgNoite.png"
             style={{ y: heroParallaxY, scale: heroParallaxScale }}
             autoPlay={!shouldReduceMotion && isHeroVisible}

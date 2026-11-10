@@ -5,7 +5,7 @@ const revealElements = ['div', 'h1', 'h2', 'h3', 'li', 'p', 'span']
 export default function ScrollReveal({
   as = 'div',
   children,
-  delay = 0,
+  delay = 0.1,
   amount = 0.18,
   className = '',
   style,
