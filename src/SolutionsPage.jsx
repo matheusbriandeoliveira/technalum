@@ -93,8 +93,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
   const selectedImage = images[activeImage]
   const imageMotion = prefersReducedMotion
     ? { duration: 0 }
-    : { duration: 0.18, ease: 'easeOut' }
-  const revealDelay = 0.2
+    : { duration: 0.12, ease: 'easeOut' }
 
   const showImage = (nextIndex) => {
     setActiveImage((nextIndex + images.length) % images.length)
@@ -124,12 +123,8 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
 
       <div className="catalog-gallery">
         <div className="catalog-gallery-main" aria-live="polite">
-          <ScrollReveal
-            className="catalog-gallery-visual-reveal"
-            amount={0.18}
-            delay={revealDelay}
-          >
-            <AnimatePresence mode="wait" initial={false}>
+          <div className="catalog-gallery-visual-reveal">
+            <AnimatePresence initial={false}>
               {selectedImage.placeholder ? (
                 <motion.div
                   className="catalog-gallery-placeholder"
@@ -154,7 +149,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                   key={`${solution.id}-${activeImage}`}
                   src={selectedImage.src}
                   alt={`${solution.title} — fotografia ${activeImage + 1}`}
-                  loading="lazy"
+                  loading={index === 0 ? 'eager' : 'lazy'}
                   decoding="async"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -164,7 +159,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                 />
               )}
             </AnimatePresence>
-          </ScrollReveal>
+          </div>
 
           <button
             className="catalog-gallery-arrow is-previous"
@@ -216,19 +211,14 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                   <span />
                 </span>
               ) : (
-                <ScrollReveal
-                  as="span"
-                  className="catalog-thumbnail-visual"
-                  amount={0.18}
-                  delay={revealDelay + imageIndex * 0.07}
-                >
+                <span className="catalog-thumbnail-visual">
                   <img
                     src={image.src}
                     alt=""
                     loading="lazy"
                     decoding="async"
                   />
-                </ScrollReveal>
+                </span>
               )}
               {image.placeholder && (
                 <span className="catalog-thumbnail-label">Em breve</span>
