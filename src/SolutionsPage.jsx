@@ -123,7 +123,11 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
 
       <div className="catalog-gallery">
         <div className="catalog-gallery-main" aria-live="polite">
-          <div className="catalog-gallery-visual-reveal">
+          <ScrollReveal
+            className="catalog-gallery-visual-reveal"
+            amount={0.08}
+            delay={0.08}
+          >
             <AnimatePresence initial={false}>
               {selectedImage.placeholder ? (
                 <motion.div
@@ -159,7 +163,7 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                 />
               )}
             </AnimatePresence>
-          </div>
+          </ScrollReveal>
 
           <button
             className="catalog-gallery-arrow is-previous"
@@ -211,14 +215,19 @@ function SolutionGallery({ solution, index, prefersReducedMotion }) {
                   <span />
                 </span>
               ) : (
-                <span className="catalog-thumbnail-visual">
+                <ScrollReveal
+                  as="span"
+                  className="catalog-thumbnail-visual"
+                  amount={0.08}
+                  delay={0.08 + imageIndex * 0.04}
+                >
                   <img
                     src={image.src}
                     alt=""
                     loading="lazy"
                     decoding="async"
                   />
-                </span>
+                </ScrollReveal>
               )}
               {image.placeholder && (
                 <span className="catalog-thumbnail-label">Em breve</span>

@@ -356,6 +356,10 @@
   width: 100%;
 }
 
+.catalog-gallery .scroll-reveal {
+  transition-duration: 450ms;
+}
+
 .catalog-gallery-main {
   position: relative;
   width: 100%;
