@@ -11,10 +11,10 @@ const solutionCatalog = [
     description:
       'Esquadrias desenvolvidas para integrar ambientes, valorizar a arquitetura e oferecer funcionalidade, durabilidade e acabamentos adequados às necessidades de cada projeto.',
     galleryImages: [
-      '/solucoes/esquadrias/front.png',
-      '/solucoes/esquadrias/close.png',
-      '/solucoes/esquadrias/closeEsquadria.png',
-      '/solucoes/esquadrias/lado.png',
+      '/images/solucoes/esquadrias/front.png',
+      '/images/solucoes/esquadrias/close.png',
+      '/images/solucoes/esquadrias/close-esquadria.png',
+      '/images/solucoes/esquadrias/lado.png',
     ],
   },
   {
@@ -23,10 +23,10 @@ const solutionCatalog = [
     description:
       'Soluções em guarda-corpos de vidro e alumínio que proporcionam proteção, transparência e integração visual em sacadas, escadas, varandas e outros ambientes.',
     galleryImages: [
-      '/solucoes/guardaCorpos/front.png',
-      '/solucoes/guardaCorpos/closeUp.png',
-      '/solucoes/guardaCorpos/cima.png',
-      '/solucoes/guardaCorpos/baixo.png',
+      '/images/solucoes/guarda-corpos/front.png',
+      '/images/solucoes/guarda-corpos/close-up.png',
+      '/images/solucoes/guarda-corpos/cima.png',
+      '/images/solucoes/guarda-corpos/baixo.png',
     ],
   },
   {
@@ -35,10 +35,10 @@ const solutionCatalog = [
     description:
       'Caixilhos de alumínio planejados para diferentes configurações de portas e janelas, combinando resistência, funcionalidade e integração com a arquitetura.',
     galleryImages: [
-      '/solucoes/caixilhos/front.png',
-      '/solucoes/caixilhos/closeUp.png',
-      '/solucoes/caixilhos/lado.png',
-      '/solucoes/caixilhos/baIxo.png',
+      '/images/solucoes/caixilhos/front.png',
+      '/images/solucoes/caixilhos/close-up.png',
+      '/images/solucoes/caixilhos/lado.png',
+      '/images/solucoes/caixilhos/baixo.png',
     ],
   },
   {
@@ -47,10 +47,10 @@ const solutionCatalog = [
     description:
       'Sistema de fachadas envidraçadas que valoriza a continuidade visual do vidro, criando superfícies modernas e elegantes para projetos arquitetônicos.',
     galleryImages: [
-      '/solucoes/glazing/close.png',
-      '/solucoes/glazing/closeUp.png',
-      '/solucoes/glazing/cima.png',
-      '/solucoes/glazing/lado.png',
+      '/images/solucoes/glazing/close.png',
+      '/images/solucoes/glazing/close-up.png',
+      '/images/solucoes/glazing/cima.png',
+      '/images/solucoes/glazing/lado.png',
     ],
   },
   {
@@ -59,10 +59,10 @@ const solutionCatalog = [
     description:
       'Estruturas com cobertura de vidro que permitem aproveitar a iluminação natural e criar ambientes protegidos, valorizando áreas externas e espaços de convivência.',
     galleryImages: [
-      '/solucoes/pergolados/close.png',
-      '/solucoes/pergolados/close%20up.png',
-      '/solucoes/pergolados/esquerda.png',
-      '/solucoes/pergolados/lado.png',
+      '/images/solucoes/pergolados/close.png',
+      '/images/solucoes/pergolados/close-up.png',
+      '/images/solucoes/pergolados/esquerda.png',
+      '/images/solucoes/pergolados/lado.png',
     ],
   },
   {
@@ -71,10 +71,10 @@ const solutionCatalog = [
     description:
       'Portas que combinam imponência, design e funcionalidade, oferecendo uma solução arquitetônica marcante para entradas residenciais e comerciais.',
     galleryImages: [
-      '/solucoes/pivotante/front.png',
-      '/solucoes/pivotante/closeUp.png',
-      '/solucoes/pivotante/cima.png',
-      '/solucoes/pivotante/lado.png',
+      '/images/solucoes/pivotante/front.png',
+      '/images/solucoes/pivotante/close-up.png',
+      '/images/solucoes/pivotante/cima.png',
+      '/images/solucoes/pivotante/lado.png',
     ],
   },
 ]
@@ -248,7 +248,7 @@ function CatalogFooter() {
         <div className="footer-brand">
           <img
             className="footer-logo"
-            src="/logoSemFundo.png"
+            src="/images/logos/technalum.png"
             alt="TECHNALUM"
             loading="lazy"
           />
@@ -325,7 +325,7 @@ function CatalogFooter() {
               rel="noreferrer"
               aria-label="WhatsApp"
             >
-              <img src="/whatsapp.png" alt="" />
+              <img src="/images/icones/whatsapp.png" alt="" />
             </a>
             <a
               className="footer-social-link"
@@ -334,7 +334,7 @@ function CatalogFooter() {
               rel="noreferrer"
               aria-label="Instagram"
             >
-              <img src="/instagram.png" alt="" />
+              <img src="/images/icones/instagram.png" alt="" />
             </a>
           </div>
         </div>
@@ -486,7 +486,7 @@ export default function SolutionsPage() {
           href="/#home"
           aria-label="TECHNALUM — página inicial"
         >
-          <img src="/logoSemFundo.png" alt="" />
+          <img src="/images/logos/technalum.png" alt="" />
         </a>
 
         <div className="social-links" aria-label="Redes sociais">
@@ -497,7 +497,7 @@ export default function SolutionsPage() {
             rel="noreferrer"
             aria-label="WhatsApp"
           >
-            <img className="social-icon" src="/whatsapp.png" alt="" />
+            <img className="social-icon" src="/images/icones/whatsapp.png" alt="" />
           </a>
           <a
             className="social-link"
@@ -506,7 +506,7 @@ export default function SolutionsPage() {
             rel="noreferrer"
             aria-label="Instagram"
           >
-            <img className="social-icon" src="/instagram.png" alt="" />
+            <img className="social-icon" src="/images/icones/instagram.png" alt="" />
           </a>
         </div>
 
@@ -559,7 +559,7 @@ export default function SolutionsPage() {
           <div className="contact-visual" aria-hidden="true">
             <img
               className="contact-background"
-              src="/img-1.png"
+              src="/images/fundos/contato.png"
               alt=""
               loading="lazy"
             />
@@ -595,7 +595,7 @@ export default function SolutionsPage() {
         rel="noreferrer"
         aria-label="Conversar pelo WhatsApp"
       >
-        <img src="/whatsapp.png" alt="" />
+        <img src="/images/icones/whatsapp.png" alt="" />
       </a>
     </div>
   )

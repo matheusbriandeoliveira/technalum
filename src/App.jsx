@@ -19,7 +19,7 @@ const solutionCards = [
     id: 'esquadrias-de-aluminio',
     category: 'ESQUADRIAS',
     title: 'Esquadrias de Alumínio',
-    image: '/carrossel/esquadriasdealuminio.png',
+    image: '/images/carrossel/esquadrias-de-aluminio.png',
     description: [
       'As esquadrias de alumínio são utilizadas na fabricação de portas, janelas e sistemas de fechamento para projetos residenciais e comerciais. Oferecem resistência à corrosão, durabilidade e versatilidade, permitindo diferentes dimensões, modelos e acabamentos.',
       'São soluções que favorecem a entrada de luz natural, a ventilação e a integração entre ambientes internos e externos, acompanhando as necessidades de cada projeto arquitetônico.',
@@ -31,7 +31,7 @@ const solutionCards = [
     id: 'guarda-corpos',
     category: 'SEGURANÇA',
     title: 'Guarda-corpos',
-    image: '/carrossel/guardaCorpos.png',
+    image: '/images/carrossel/guarda-corpos.png',
     description: [
       'Os guarda-corpos são sistemas de proteção instalados em sacadas, varandas, escadas, mezaninos e áreas elevadas. Fabricados com estruturas de alumínio e diferentes configurações de vidro, proporcionam segurança sem comprometer a visibilidade e a estética dos ambientes.',
       'Sua aplicação permite criar espaços mais abertos e integrados, valorizando a arquitetura com linhas discretas e acabamento contemporâneo.',
@@ -43,7 +43,7 @@ const solutionCards = [
     id: 'caixilhos',
     category: 'VÃOS ENVIDRAÇADOS',
     title: 'Caixilhos',
-    image: '/carrossel/caixilios.png',
+    image: '/images/carrossel/caixilhos.png',
     description: [
       'Os caixilhos são estruturas responsáveis por sustentar e acomodar vidros em portas, janelas e outros sistemas de fechamento. Produzidos em alumínio, podem ser desenvolvidos em diferentes formatos e configurações, conforme as características de cada projeto.',
       'Além de oferecerem resistência e estabilidade, contribuem para a vedação, o funcionamento das aberturas e a qualidade do acabamento, sendo elementos fundamentais na composição das fachadas e dos ambientes.',
@@ -55,7 +55,7 @@ const solutionCards = [
     id: 'structural-glazing',
     category: 'SISTEMAS ENVIDRAÇADOS',
     title: 'Structural Glazing',
-    image: '/carrossel/glazing.png',
+    image: '/images/carrossel/glazing.png',
     description: [
       'O Structural Glazing é um sistema de fachada envidraçada que utiliza fixação estrutural para integrar os painéis de vidro à estrutura de suporte. Sua principal característica é a aparência contínua da superfície envidraçada, com perfis pouco aparentes pelo lado externo.',
       'Muito utilizado em fachadas residenciais e comerciais contemporâneas, permite explorar grandes áreas de vidro, proporcionando iluminação natural, amplitude visual e uma estética arquitetônica sofisticada.',
@@ -67,7 +67,7 @@ const solutionCards = [
     id: 'pergolados-com-vidro',
     category: 'ÁREAS DE CONVIVÊNCIA',
     title: 'Pergolados com Vidro',
-    image: '/carrossel/pergoladocomvidro.png',
+    image: '/images/carrossel/pergolado-com-vidro.png',
     description: [
       'Os pergolados com vidro são estruturas projetadas para cobrir e valorizar áreas externas, como jardins, corredores, terraços, varandas e espaços de convivência. Combinam perfis estruturais com painéis de vidro, permitindo a entrada de iluminação natural enquanto oferecem proteção contra a chuva.',
       'São soluções que ampliam as possibilidades de utilização dos ambientes externos, criando espaços mais confortáveis e integrados à arquitetura da residência.',
@@ -79,7 +79,7 @@ const solutionCards = [
     id: 'portas-pivotantes',
     category: 'PORTAS',
     title: 'Portas Pivotantes',
-    image: '/carrossel/portaspivotantes.png',
+    image: '/images/carrossel/portas-pivotantes.png',
     description: [
       'As portas pivotantes utilizam um sistema de abertura baseado em pivôs instalados nas extremidades superior e inferior da folha, permitindo sua rotação em torno de um eixo vertical. Esse mecanismo possibilita a criação de portas de grandes dimensões, muito utilizadas em entradas principais de residências e projetos arquitetônicos contemporâneos.',
       'Além de sua funcionalidade, destacam-se pela presença visual, variedade de acabamentos e capacidade de transformar a entrada em um elemento marcante da fachada.',
@@ -89,11 +89,11 @@ const solutionCards = [
   },
 ]
 const partnerBrands = [
-  { name: 'Roto Fermax', image: '/marcas/roto-logo.png' },
-  { name: 'Fise', image: '/marcas/fise-logo.png' },
-  { name: 'Decamp Alumínio', image: '/marcas/decamp-logo.png' },
-  { name: 'Day Brasil', image: '/marcas/dayBrasil-logo.png' },
-  { name: 'Cyberglass', image: '/marcas/cyberglass-logo.png' },
+  { name: 'Roto Fermax', image: '/images/marcas/roto-logo.png' },
+  { name: 'Fise', image: '/images/marcas/fise-logo.png' },
+  { name: 'Decamp Alumínio', image: '/images/marcas/decamp-logo.png' },
+  { name: 'Day Brasil', image: '/images/marcas/day-brasil-logo.png' },
+  { name: 'Cyberglass', image: '/images/marcas/cyberglass-logo.png' },
 ]
 const partnerBrandSlots = Array.from({ length: partnerBrands.length * 4 }, (_, index) =>
   partnerBrands[index % partnerBrands.length],
@@ -631,7 +631,7 @@ function SolutionsSection({ shouldReduceMotion, isReady, contactSectionRef }) {
         <div className="contact-visual" aria-hidden="true">
           <motion.img
             className="contact-background"
-            src="/img-1.png"
+            src="/images/fundos/contato.png"
             alt=""
             loading="lazy"
             style={{ y: contactImageY }}
@@ -975,7 +975,7 @@ function App() {
     })
 
     Promise.all([
-      Promise.allSettled([loadImage('/logoSemFundo.png')]),
+      Promise.allSettled([loadImage('/images/logos/technalum.png')]),
       minimumDisplayTime,
     ]).then(([imageResults]) => {
       imageResults.forEach((result) => {
@@ -1019,7 +1019,7 @@ function App() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={loaderTransition}
           >
-            <img className="preloader-logo" src="/logoSemFundo.png" alt="" />
+            <img className="preloader-logo" src="/images/logos/technalum.png" alt="" />
             <span className="preloader-progress" aria-hidden="true">
               <motion.span
                 className="preloader-progress-fill"
@@ -1056,8 +1056,8 @@ function App() {
           <motion.video
             ref={heroVideoRef}
             className="hero-video"
-            src="/vdbackgroundTech2.mp4"
-            poster="/bgNoite.png"
+            src="/videos/hero.mp4"
+            poster="/images/fundos/hero-noite.png"
             style={{ y: heroParallaxY, scale: heroParallaxScale }}
             autoPlay={!shouldReduceMotion && isHeroVisible}
             muted
@@ -1111,7 +1111,7 @@ function App() {
             whileFocus={{ scale: 1.12, y: -2 }}
             transition={animationTransition}
           >
-            <img className="social-icon" src="/whatsapp.png" alt="" />
+            <img className="social-icon" src="/images/icones/whatsapp.png" alt="" />
           </motion.a>
           <motion.a
             className="social-link"
@@ -1123,7 +1123,7 @@ function App() {
             whileFocus={{ scale: 1.12, y: -2 }}
             transition={animationTransition}
           >
-            <img className="social-icon" src="/instagram.png" alt="" />
+            <img className="social-icon" src="/images/icones/instagram.png" alt="" />
           </motion.a>
         </div>
       </header>
@@ -1279,7 +1279,7 @@ function App() {
           <div className="footer-brand">
             <img
               className="footer-logo"
-              src="/logoSemFundo.png"
+              src="/images/logos/technalum.png"
               alt="TECHNALUM"
               loading="lazy"
             />
@@ -1320,7 +1320,7 @@ function App() {
                 rel="noreferrer"
                 aria-label="WhatsApp"
               >
-                <img src="/whatsapp.png" alt="" />
+                <img src="/images/icones/whatsapp.png" alt="" />
               </a>
               <a
                 className="footer-social-link"
@@ -1329,7 +1329,7 @@ function App() {
                 rel="noreferrer"
                 aria-label="Instagram"
               >
-                <img src="/instagram.png" alt="" />
+                <img src="/images/icones/instagram.png" alt="" />
               </a>
             </div>
           </div>
@@ -1367,7 +1367,7 @@ function App() {
         >
           <motion.img
             className="brand-logo"
-            src="/logoSemFundo.png"
+            src="/images/logos/technalum.png"
             alt=""
             style={{ width: heroLogoWidthProgress }}
           />
@@ -1381,7 +1381,7 @@ function App() {
         rel="noreferrer"
         aria-label="Conversar pelo WhatsApp"
       >
-        <img src="/whatsapp.png" alt="" />
+        <img src="/images/icones/whatsapp.png" alt="" />
       </a>
     </>
   )

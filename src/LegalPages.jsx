@@ -168,7 +168,7 @@ export function LegalPage() {
     <div className="legal-page">
       <header className="legal-header">
         <a className="legal-brand" href="/" aria-label="TECHNALUM — página inicial">
-          <img src="/logoSemFundo.png" alt="TECHNALUM" />
+          <img src="/images/logos/technalum.png" alt="TECHNALUM" />
         </a>
         <a className="legal-home-link" href="/">
           Voltar ao site

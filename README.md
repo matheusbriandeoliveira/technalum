@@ -1,16 +1,41 @@
-# React + Vite
+﻿# Technalum Esquadrias
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Site em React e Vite, com páginas de soluções e informações legais.
 
-Currently, two official plugins are available:
+## Desenvolvimento
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `npm install`: instala as dependências.
+- `npm run dev`: inicia o servidor de desenvolvimento.
+- `npm run build`: gera o site em `dist`.
+- `npm run preview`: permite conferir o build localmente.
+- `npm run lint`: verifica o código com ESLint.
 
-## React Compiler
+## Organização dos arquivos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```text
+public/
+  favicon.svg
+  images/
+    carrossel/       Imagens dos cards de soluções
+    fundos/          Imagens de fundo do hero e do contato
+    icones/          Ícones de redes sociais
+    logos/           Identidade visual da Technalum
+    marcas/          Logos dos parceiros
+    solucoes/        Galerias separadas por tipo de solução
+  videos/            Vídeos utilizados pelo site
+assets/
+  nao-utilizados/    Materiais preservados sem referência no código
+src/                Componentes React e estilos
+```
 
-## Expanding the ESLint configuration
+Os arquivos de `public` são servidos diretamente pela raiz do site. Por exemplo,
+`public/images/logos/technalum.png` é usado como `/images/logos/technalum.png`.
+Use nomes em letras minúsculas, sem espaços ou acentos e com palavras separadas
+por hífen. Ao renomear ou mover uma imagem, atualize suas referências no código.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+A pasta `assets/nao-utilizados` preserva o vídeo comprimido alternativo, o logo
+escrito, o sprite de ícones e as imagens do template sem uso atual. Esses arquivos
+não entram no build automaticamente. Para utilizá-los, mova-os para a categoria
+correspondente em `public` e inclua a referência no código.
+
+Os arquivos HTML na raiz são os pontos de entrada configurados em `vite.config.js`.
