@@ -132,6 +132,7 @@ const companyHighlights = [
 function PartnerBrandCarousel({ shouldReduceMotion }) {
   const stageRef = useRef(null)
   const cardRefs = useRef([])
+  const cardVisibilityRef = useRef([])
   const animationRef = useRef({
     offset: 0,
     velocity: 0,
@@ -178,7 +179,10 @@ function PartnerBrandCarousel({ shouldReduceMotion }) {
       const maxAngle = (78 * Math.PI) / 180
       const maxX = radius * Math.sin(maxAngle)
 
-      stage.style.perspective = `${radius * 2.4}px`
+      const perspective = `${radius * 2.4}px`
+      if (stage.style.perspective !== perspective) {
+        stage.style.perspective = perspective
+      }
 
       cardRefs.current.forEach((card, index) => {
         if (!card) {
@@ -191,7 +195,15 @@ function PartnerBrandCarousel({ shouldReduceMotion }) {
         const angle = Math.asin(Math.max(-1, Math.min(1, x / radius)))
         const depth = radius * (1 - Math.cos(angle))
 
-        card.style.visibility = visible ? 'visible' : 'hidden'
+        if (cardVisibilityRef.current[index] !== visible) {
+          card.style.visibility = visible ? 'visible' : 'hidden'
+          cardVisibilityRef.current[index] = visible
+        }
+
+        if (!visible) {
+          return
+        }
+
         card.style.zIndex = `${Math.round(Math.cos(angle) * 100)}`
         card.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, ${depth}px) rotateY(${-angle}rad)`
       })
@@ -915,7 +927,13 @@ function App() {
     document.documentElement.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
 
+    const releaseScrollFailsafe = window.setTimeout(
+      () => setLoaderState('hidden'),
+      5000,
+    )
+
     return () => {
+      window.clearTimeout(releaseScrollFailsafe)
       document.documentElement.style.overflow = rootOverflow
       document.body.style.overflow = bodyOverflow
     }
@@ -923,7 +941,6 @@ function App() {
 
   useEffect(() => {
     let isMounted = true
-    let removeVideoListeners = () => {}
 
     const loadImage = (src) =>
       new Promise((resolve, reject) => {
@@ -934,56 +951,12 @@ function App() {
         image.src = src
       })
 
-    const videoLoaded = new Promise((resolve, reject) => {
-      const video = heroVideoRef.current
-      if (!video) {
-        reject(new Error('Não foi possível encontrar o vídeo do hero'))
-        return
-      }
-
-      if (shouldReduceMotion || !isHeroVisible) {
-        resolve()
-        return
-      }
-
-      const cleanup = () => {
-        video.removeEventListener('loadeddata', handleLoaded)
-        video.removeEventListener('error', handleError)
-      }
-      const handleLoaded = () => {
-        cleanup()
-        resolve()
-      }
-
-      const handleError = () => {
-        cleanup()
-        reject(new Error('Não foi possível carregar /vdbackgroundTech.mp4'))
-      }
-
-      if (video.error) {
-        handleError()
-        return
-      }
-
-      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-        resolve()
-        return
-      }
-
-      removeVideoListeners = cleanup
-      video.addEventListener('loadeddata', handleLoaded)
-      video.addEventListener('error', handleError)
-    })
-
     const minimumDisplayTime = new Promise((resolve) => {
       window.setTimeout(resolve, 1600)
     })
 
     Promise.all([
-      Promise.allSettled([
-        videoLoaded,
-        loadImage('/logoSemFundo.png'),
-      ]),
+      Promise.allSettled([loadImage('/logoSemFundo.png')]),
       minimumDisplayTime,
     ]).then(([imageResults]) => {
       imageResults.forEach((result) => {
@@ -999,9 +972,8 @@ function App() {
 
     return () => {
       isMounted = false
-      removeVideoListeners()
     }
-  }, [isHeroVisible, shouldReduceMotion])
+  }, [shouldReduceMotion])
 
   return (
     <>
